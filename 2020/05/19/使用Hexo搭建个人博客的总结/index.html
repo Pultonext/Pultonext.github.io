@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    
+
+    <title>
+      使用Hexo搭建个人博客的总结 | DarkADays 
+    </title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    
+      <meta name="author" content="DarkADays">
+    
+    
+
+    <meta name="description" content="花了一天的时间搭建了自己的个人博客，下面进行一些总结。链接：link搭建博客所参考的视频: 参考视频 Hexo的搭建步骤1.安装node.js2.安装Git3.安装和初始化Hexo4.将Hexo部署到GitHub5.配置部署时免密登录 1.安装node.jsHexo是基于nodeJS编写的，所以需要安装下nodeJS和里面的工具npm 安装方法：直接前往官网下载LTS版本的即可。安装完成后可以打开">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用Hexo搭建个人博客的总结 | DarkADays">
+<meta property="og:url" content="http://yoursite.com/2020/05/19/%E4%BD%BF%E7%94%A8Hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E7%9A%84%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="DarkADays">
+<meta property="og:description" content="花了一天的时间搭建了自己的个人博客，下面进行一些总结。链接：link搭建博客所参考的视频: 参考视频 Hexo的搭建步骤1.安装node.js2.安装Git3.安装和初始化Hexo4.将Hexo部署到GitHub5.配置部署时免密登录 1.安装node.jsHexo是基于nodeJS编写的，所以需要安装下nodeJS和里面的工具npm 安装方法：直接前往官网下载LTS版本的即可。安装完成后可以打开">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2020051911023764.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0xMdHVybg==,size_16,color_FFFFFF,t_70">
+<meta property="article:published_time" content="2020-05-19T03:12:07.399Z">
+<meta property="article:modified_time" content="2020-05-19T03:12:27.334Z">
+<meta property="article:author" content="DarkADays">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/2020051911023764.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0xMdHVybg==,size_16,color_FFFFFF,t_70">
+    
+    
+    
+      <link rel="icon" type="image/x-icon" href="/favicon.png">
+    
+    
+<link rel="stylesheet" href="/css/uno.css">
+
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+    
+<link rel="stylesheet" href="/css/archive.css">
+
+    
+<link rel="stylesheet" href="/css/china-social-icon.css">
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+
+    <span class="mobile btn-mobile-menu">
+        <i class="icon icon-list btn-mobile-menu__icon"></i>
+        <i class="icon icon-x-circle btn-mobile-close__icon hidden"></i>
+    </span>
+
+    
+
+<header class="panel-cover panel-cover--collapsed">
+
+
+  <div class="panel-main">
+
+  
+    <div class="panel-main__inner panel-inverted">
+    <div class="panel-main__content">
+
+        
+
+        <h1 class="panel-cover__title panel-title"><a href="/" title="link to homepage">DarkADays</a></h1>
+        <hr class="panel-cover__divider" />
+
+        
+
+        <div class="navigation-wrapper">
+
+          <nav class="cover-navigation cover-navigation--primary">
+            <ul class="navigation">
+
+              
+                
+                <li class="navigation__item"><a href="/#blog" title="" class="blog-button">首页</a></li>
+              
+                
+                <li class="navigation__item"><a href="/about" title="" class="">关于</a></li>
+              
+                
+                <li class="navigation__item"><a href="/archive" title="" class="">归档</a></li>
+              
+
+            </ul>
+          </nav>
+
+          <!-- ----------------------------
+To add a new social icon simply duplicate one of the list items from below
+and change the class in the <i> tag to match the desired social network
+and then add your link to the <a>. Here is a full list of social network
+classes that you can use:
+
+    icon-social-500px
+    icon-social-behance
+    icon-social-delicious
+    icon-social-designer-news
+    icon-social-deviant-art
+    icon-social-digg
+    icon-social-dribbble
+    icon-social-facebook
+    icon-social-flickr
+    icon-social-forrst
+    icon-social-foursquare
+    icon-social-github
+    icon-social-google-plus
+    icon-social-hi5
+    icon-social-instagram
+    icon-social-lastfm
+    icon-social-linkedin
+    icon-social-medium
+    icon-social-myspace
+    icon-social-path
+    icon-social-pinterest
+    icon-social-rdio
+    icon-social-reddit
+    icon-social-skype
+    icon-social-spotify
+    icon-social-stack-overflow
+    icon-social-steam
+    icon-social-stumbleupon
+    icon-social-treehouse
+    icon-social-tumblr
+    icon-social-twitter
+    icon-social-vimeo
+    icon-social-xbox
+    icon-social-yelp
+    icon-social-youtube
+    icon-social-zerply
+    icon-mail
+
+-------------------------------->
+
+<!-- add social info here -->
+
+
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="panel-cover--overlay"></div>
+  </div>
+</header>
+
+    <div class="content-wrapper">
+        <div class="content-wrapper__inner entry">
+            
+
+<article class="post-container post-container--single">
+
+  <header class="post-header">
+    
+    <h1 class="post-title">使用Hexo搭建个人博客的总结</h1>
+
+    
+
+    <div class="post-meta">
+      <time datetime="2020-05-19" class="post-meta__date date">2020-05-19</time> 
+
+      <span class="post-meta__tags tags">
+
+          
+
+          
+
+      </span>
+    </div>
+    
+    
+
+  </header>
+
+  <section id="post-content" class="article-content post">
+    <p>花了一天的时间搭建了自己的个人博客，下面进行一些总结。链接：<a href="https://pultonext.github.io/" target="_blank" rel="noopener">link</a><br>搭建博客所参考的视频: <a href="https://www.bilibili.com/video/BV1Yb411a7ty" target="_blank" rel="noopener">参考视频</a></p>
+<h1 id="Hexo的搭建步骤"><a href="#Hexo的搭建步骤" class="headerlink" title="Hexo的搭建步骤"></a>Hexo的搭建步骤</h1><p>1.安装node.js<br>2.安装Git<br>3.安装和初始化Hexo<br>4.将Hexo部署到GitHub<br>5.配置部署时免密登录</p>
+<h2 id="1-安装node-js"><a href="#1-安装node-js" class="headerlink" title="1.安装node.js"></a>1.安装node.js</h2><p>Hexo是基于nodeJS编写的，所以需要安装下nodeJS和里面的工具npm</p>
+<p>安装方法：直接前往官网下载LTS版本的即可。<br>安装完成后可以打开cmd窗口使用以下命令，来检查下安装是否完成。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">node -v			<span class="comment">//检查node的版本</span></span><br><span class="line">npm -v			<span class="comment">//检查包管理器的版本</span></span><br></pre></td></tr></table></figure>
+<p>因为npm是node官方的包管理器，因为网络原因有时可能无法使用，这里最好安装下cnpm（即国内版npm）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install -g cnpm --registry=http:<span class="comment">//registry.npm.taobao.org	//安装淘宝的cnpm管理器</span></span><br><span class="line">cnpm -v			<span class="comment">//查看cnpm版本</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="2-安装Git"><a href="#2-安装Git" class="headerlink" title="2.安装Git"></a>2.安装Git</h2><p>Git是目前世界上最先进的分布式版本控制系统，可以有效、高速的处理从很小到非常大的项目版本管理。廖雪峰老师的Git教程。<a href="https://www.liaoxuefeng.com/wiki/896043488029600" target="_blank" rel="noopener">Git教程</a></p>
+<p>下载安装：直接到Git的官网进行下载即可。<br>安装完成后在cmd窗口中使用 <font color = red>git –version</font> 命令来验证下是否安装成功。</p>
+<p><strong><em>Git安装完成后要进行一些基本的信息设置：</em></strong></p>
+<blockquote>
+<p>1、设置用户名：git  config – global  user.name  ‘你再github上注册的用户名’;<br>2、设置用户邮箱：git  config – global  user.email  ‘注册时候的邮箱’;</p>
+</blockquote>
+<p>注意：该配置会在github主页上显示谁提交了该文件</p>
+<blockquote>
+<p>3、配置完成后使用以下命令检查是否配置成功</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git config --list</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意：git  config –global 参数，有了这个参数表示你这台机器上所有的git仓库都会使用这个配置，当然你也可以对某个仓库指定不同的用户名和邮箱</strong></p>
+<h2 id="3-安装和初始化Hexo"><a href="#3-安装和初始化Hexo" class="headerlink" title="3.安装和初始化Hexo"></a>3.安装和初始化Hexo</h2><p>因为Git已经安装完成，以后可以使用Git Bash来代替cmd命令窗口。<br>下面先安装hexo框架：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cnpm install -g hexo-cli		<span class="comment">//安装hexo框架</span></span><br></pre></td></tr></table></figure>
+<p>安装完成后同样使用 <font color=red>hexo -v</font> 命令来查看是否安装成功。<br>到此hexo框架已经安装完成。</p>
+<p>下面就需要进行初始化：<br>初始化前先在任意一个地方创建一个文件夹（myblog），这个文件夹就是以后你自己所建造的博客存放的文件夹。<br>接下来要在此文件夹下面执行初始化命令：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo init			<span class="comment">//初始化博客</span></span><br></pre></td></tr></table></figure>
+<p>这里我在执行命令后，碰到了这个问题，报出以下错误：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">INFO  Cloning hexo-starter https:<span class="comment">//github.com/hexojs/hexo-starter.git</span></span><br><span class="line">Cloning into <span class="string">'F:\blog'</span>...</span><br><span class="line">fatal: unable to access <span class="string">'https://github.com/hexojs/hexo-starter.git/'</span>: Failed to connect to localhost port <span class="number">52518</span>: Connection refused</span><br><span class="line">WARN  git clone failed. Copying data instead</span><br><span class="line">WARN  Failed to install dependencies. Please run <span class="string">'npm install'</span> manually!</span><br></pre></td></tr></table></figure>
+
+<p><strong>解决办法：</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cnpm install</span><br></pre></td></tr></table></figure>
+
+<p>初始化完成后文件夹下面应该有以下内容：</p>
+<ul>
+<li>node_modules: 依赖包</li>
+<li>public：存放生成的页面</li>
+<li>scaffolds：生成文章的一些模板</li>
+<li>source：用来存放你的文章</li>
+<li>themes：主题</li>
+<li>_config.yml: 博客的配置文件</li>
+</ul>
+<p>到此为止，博客的搭建已经完成，下面直接启动即可在本地访问</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo s			<span class="comment">//启动hexo服务</span></span><br></pre></td></tr></table></figure>
+<p>在浏览器输入localhost：4000即可看到生成的博客。<br>使用ctrl+c可停掉服务。</p>
+<h2 id="4-将Hexo部署到Github上"><a href="#4-将Hexo部署到Github上" class="headerlink" title="4.将Hexo部署到Github上"></a>4.将Hexo部署到Github上</h2><p>我们博客建立完成后，目前只能在本地访问，下面我们要部署到github上，借助于github来实现远程的访问。<br>首先，在github上面创建一个个人仓库，这里仓库名称必须为</p>
+<blockquote>
+<p>“YourGithubName”.github.io<br>引号内内容为github用户名，这个仓库就是以后存放博客文章的地方</p>
+</blockquote>
+<p>接下来我们回到git bash命令行输入下面这个命令</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cnpm install --save hexo-deployer-git			<span class="comment">//在你的博客目录下安装git插件</span></span><br></pre></td></tr></table></figure>
+<p>然后要修改下<font color=red>_config.ym</font>l这个配置文件:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repo: https:<span class="comment">//github.com/YourgithubName/YourgithubName.github.io.git</span></span><br><span class="line">  branch: master</span><br></pre></td></tr></table></figure>
+<p>然后输入以下命令：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hexo clean			<span class="comment">//清理之前生成的东西，可以不加</span></span><br><span class="line">hexo g				<span class="comment">//生成静态文章</span></span><br><span class="line">hexo d				<span class="comment">//将文章部署到github上去</span></span><br></pre></td></tr></table></figure>
+<p>这里部署需要输入github的用户名和密码。<br>部署成功后可以访问下面这个网址：<font color=red><a href="http://yourname.github.io" target="_blank" rel="noopener">http://yourname.github.io</a></font>，能够看到个人博客，说明成功了。</p>
+<h2 id="5-配置部署时免密登录"><a href="#5-配置部署时免密登录" class="headerlink" title="5.配置部署时免密登录"></a>5.配置部署时免密登录</h2><p>前面我们执行 <font color=red>hexo d</font> 这个部署命令时，要输入我们的账号和密码，以后每次进行部署时显然很麻烦，接下来我们就进行免密的配置。</p>
+<p>首先生成 ssh key密钥，打开git bash执行下面这行命令</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa -C <span class="string">"your_email@example.com"</span></span><br></pre></td></tr></table></figure>
+<p>一路回车即可，这是会在你的电脑C盘<font color=red>Users/账户名/</font>这个文件夹下有一个.ssh文件，里面就是生成的密钥，打开带有.pub后缀的这个文件，复制里面的密钥。</p>
+<p>然后登陆你的github帐户。点击你的头像，然后 Settings -&gt; 左栏点击 SSH and GPG keys -&gt; 点击 New SSH key<br><img src="https://img-blog.csdnimg.cn/2020051911023764.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0xMdHVybg==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>输入完密钥后，在git bash测试密钥是否正常工作：</p>
+<blockquote>
+<p>$ ssh -T <a href="mailto:git@github.com">git@github.com</a></p>
+</blockquote>
+<p>如果看到</p>
+<blockquote>
+<p>Hi xxx! You’ve successfully authenticated, but GitHub does not # provide shell access.</p>
+</blockquote>
+<p>说明引用成功。<br>下面还需配置下_config.yml这个配置文件</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repo: git<span class="meta">@github</span>.com:YourgithubName/YourgithubName.github.io.git</span><br><span class="line">  branch: master</span><br></pre></td></tr></table></figure>
+<p>只需将repo的配置改动下即可，这个时候再尝试 <font color = red>hexo d</font> 就不需要输入密码了。</p>
+
+  </section>
+
+  <section class="post-comments">
+
+    <!-- 将评论系统（例如Disqus、多说、友言、畅言等）提供的代码片段粘贴在这里 -->
+    
+</section>
+
+
+</article>
+
+
+            <footer class="footer">
+
+    <span class="footer__copyright">&copy; 2014-2015. | 由<a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>强力驱动 | 主题<a href="https://github.com/someus/huno" target="_blank" rel="noopener">Huno</a></span>
+    
+</footer>
+        </div>
+    </div>
+
+    <!-- js files -->
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/scale.fix.js"></script>
+    
+
+    
+
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript"> 
+        $(document).ready(function(){
+            MathJax.Hub.Config({ 
+                tex2jax: {inlineMath: [['[latex]','[/latex]'], ['\\(','\\)']]} 
+            });
+        });
+    </script>
+
+
+    
+
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/awesome-toc.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $.awesome_toc({
+                overlay: true,
+                contentId: "post-content",
+            });
+        });
+    </script>
+
+
+    
+    
+    <!--kill ie6 -->
+<!--[if IE 6]>
+  <script src="//letskillie6.googlecode.com/svn/trunk/2/zh_CN.js"></script>
+<![endif]-->
+
+</body>
+</html>
