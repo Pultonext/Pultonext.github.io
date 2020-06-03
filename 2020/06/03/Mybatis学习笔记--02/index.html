@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    
+
+    <title>
+      Mybatis学习笔记--02 | DarkADays 
+    </title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    
+      <meta name="author" content="DarkADays">
+    
+    
+
+    <meta name="description" content="1.基于代理Dao的CRUD操作 1.1根据ID进行查询涉及到对数据库的操作，所使用的表还是之前已经创建好的User表。 在持久层接口添加 getUserById 方法。  123456789101112public interface IUserDao &amp;#123;   &#x2F;**    * 查找所有用户    * @return    *&#x2F;   List&lt;User&gt; findAll()">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Mybatis学习笔记--02 | DarkADays">
+<meta property="og:url" content="http://yoursite.com/2020/06/03/Mybatis%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0--02/index.html">
+<meta property="og:site_name" content="DarkADays">
+<meta property="og:description" content="1.基于代理Dao的CRUD操作 1.1根据ID进行查询涉及到对数据库的操作，所使用的表还是之前已经创建好的User表。 在持久层接口添加 getUserById 方法。  123456789101112public interface IUserDao &amp;#123;   &#x2F;**    * 查找所有用户    * @return    *&#x2F;   List&lt;User&gt; findAll()">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200526205359894.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0xMdHVybg==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200526205250606.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0xMdHVybg==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200603201829469.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200603203257407.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0xMdHVybg==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200603205821661.png">
+<meta property="article:published_time" content="2020-06-03T13:00:12.244Z">
+<meta property="article:modified_time" content="2020-06-03T13:03:16.816Z">
+<meta property="article:author" content="DarkADays">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/20200526205359894.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0xMdHVybg==,size_16,color_FFFFFF,t_70">
+    
+    
+    
+      <link rel="icon" type="image/x-icon" href="/favicon.png">
+    
+    
+<link rel="stylesheet" href="/css/uno.css">
+
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+    
+<link rel="stylesheet" href="/css/archive.css">
+
+    
+<link rel="stylesheet" href="/css/china-social-icon.css">
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+
+    <span class="mobile btn-mobile-menu">
+        <i class="icon icon-list btn-mobile-menu__icon"></i>
+        <i class="icon icon-x-circle btn-mobile-close__icon hidden"></i>
+    </span>
+
+    
+
+<header class="panel-cover panel-cover--collapsed">
+
+
+  <div class="panel-main">
+
+  
+    <div class="panel-main__inner panel-inverted">
+    <div class="panel-main__content">
+
+        
+
+        <h1 class="panel-cover__title panel-title"><a href="/" title="link to homepage">DarkADays</a></h1>
+        <hr class="panel-cover__divider" />
+
+        
+
+        <div class="navigation-wrapper">
+
+          <nav class="cover-navigation cover-navigation--primary">
+            <ul class="navigation">
+
+              
+                
+                <li class="navigation__item"><a href="/#blog" title="" class="blog-button">首页</a></li>
+              
+                
+                <li class="navigation__item"><a href="/about" title="" class="">关于</a></li>
+              
+                
+                <li class="navigation__item"><a href="/archive" title="" class="">归档</a></li>
+              
+
+            </ul>
+          </nav>
+
+          <!-- ----------------------------
+To add a new social icon simply duplicate one of the list items from below
+and change the class in the <i> tag to match the desired social network
+and then add your link to the <a>. Here is a full list of social network
+classes that you can use:
+
+    icon-social-500px
+    icon-social-behance
+    icon-social-delicious
+    icon-social-designer-news
+    icon-social-deviant-art
+    icon-social-digg
+    icon-social-dribbble
+    icon-social-facebook
+    icon-social-flickr
+    icon-social-forrst
+    icon-social-foursquare
+    icon-social-github
+    icon-social-google-plus
+    icon-social-hi5
+    icon-social-instagram
+    icon-social-lastfm
+    icon-social-linkedin
+    icon-social-medium
+    icon-social-myspace
+    icon-social-path
+    icon-social-pinterest
+    icon-social-rdio
+    icon-social-reddit
+    icon-social-skype
+    icon-social-spotify
+    icon-social-stack-overflow
+    icon-social-steam
+    icon-social-stumbleupon
+    icon-social-treehouse
+    icon-social-tumblr
+    icon-social-twitter
+    icon-social-vimeo
+    icon-social-xbox
+    icon-social-yelp
+    icon-social-youtube
+    icon-social-zerply
+    icon-mail
+
+-------------------------------->
+
+<!-- add social info here -->
+
+
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="panel-cover--overlay"></div>
+  </div>
+</header>
+
+    <div class="content-wrapper">
+        <div class="content-wrapper__inner entry">
+            
+
+<article class="post-container post-container--single">
+
+  <header class="post-header">
+    
+    <h1 class="post-title">Mybatis学习笔记--02</h1>
+
+    
+
+    <div class="post-meta">
+      <time datetime="2020-06-03" class="post-meta__date date">2020-06-03</time> 
+
+      <span class="post-meta__tags tags">
+
+          
+
+          
+
+      </span>
+    </div>
+    
+    
+
+  </header>
+
+  <section id="post-content" class="article-content post">
+    <h1 id="1-基于代理Dao的CRUD操作"><a href="#1-基于代理Dao的CRUD操作" class="headerlink" title="1.基于代理Dao的CRUD操作"></a>1.基于代理Dao的CRUD操作</h1><hr>
+<h2 id="1-1根据ID进行查询"><a href="#1-1根据ID进行查询" class="headerlink" title="1.1根据ID进行查询"></a>1.1根据ID进行查询</h2><pre><code>涉及到对数据库的操作，所使用的表还是之前已经创建好的User表。</code></pre><ul>
+<li>在持久层接口添加 <font color=red>getUserById</font> 方法。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">IUserDao</span> </span>&#123;</span><br><span class="line">   <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * 查找所有用户</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="function">List&lt;User&gt; <span class="title">findAll</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * 根据id查找用户</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@param</span> id</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="function">User <span class="title">getUserById</span><span class="params">(Integer id)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>在用户的映射配置文件<font color=red>IUserDao.xml</font> 中进行配置。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=<span class="string">"1.0"</span> encoding=<span class="string">"UTF-8"</span> ?&gt;</span><br><span class="line">&lt;!DOCTYPE mapper</span><br><span class="line">        PUBLIC <span class="string">"-//mybatis.org//DTD Mapper 3.0//EN"</span></span><br><span class="line">        <span class="string">"http://mybatis.org/dtd/mybatis-3-mapper.dtd"</span>&gt;</span><br><span class="line">&lt;mapper namespace=<span class="string">"com.zut.dao.IUserDao"</span>&gt;</span><br><span class="line">	&lt;!-- 查找所用 --&gt;</span><br><span class="line">    &lt;select id=<span class="string">"findAll"</span> resultType=<span class="string">"com.zut.domain.User"</span>&gt;</span><br><span class="line">       select * from user</span><br><span class="line">    &lt;/select&gt;</span><br><span class="line">    &lt;!-- 根据id查找用户 --&gt;</span><br><span class="line">	&lt;select id=<span class="string">"getUserById"</span> parameterType=<span class="string">"java.lang.Integer"</span> resultType=<span class="string">"com.zut.domain.User"</span>&gt;</span><br><span class="line">	        select * from user where id=#&#123;aa&#125;</span><br><span class="line">	&lt;/select&gt;</span><br><span class="line">&lt;/mapper&gt;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<ul>
+<li>这里的 <font color=red><strong>parameterType</strong></font> 用于指定传入的参数类型。</li>
+<li>sql语句中使用的 <font color=red><strong>#{ }</strong></font><br>则代表一个占位符，相当于JDBC中的？，用于执行语句时替换实际的数据。具体的数据内容由#{}里面的内容决定。</li>
+<li>因为这里传入的参数为基本类型，所以此处可以随意写，任何内容均可。</li>
+</ul>
+</blockquote>
+</li>
+<li><p>在测试类中添加测试</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">mybatistest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> IUserDao iUserDao;</span><br><span class="line">    <span class="keyword">private</span> SqlSession session;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//初始化</span></span><br><span class="line">    <span class="meta">@Before</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        <span class="comment">//1.读取配置文件</span></span><br><span class="line">        InputStream in = Resources.getResourceAsStream(<span class="string">"SqlMapConfig.xml"</span>);</span><br><span class="line">        <span class="comment">//2.创建SqlSessionFactory工厂</span></span><br><span class="line">        SqlSessionFactoryBuilder builder = <span class="keyword">new</span> SqlSessionFactoryBuilder();</span><br><span class="line">        SqlSessionFactory factory = builder.build(in);</span><br><span class="line">        <span class="comment">//3.使用工厂生产sqlSessino对象</span></span><br><span class="line">        session = factory.openSession();</span><br><span class="line">        <span class="comment">//4.使用SqlSession创建Dao的代理对象</span></span><br><span class="line">        iUserDao = session.getMapper(IUserDao<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@After</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">destory</span><span class="params">()</span></span>&#123;</span><br><span class="line">        session.commit();</span><br><span class="line">        <span class="comment">//释放资源</span></span><br><span class="line">        session.close();</span><br><span class="line">    &#125;</span><br><span class="line">     <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 测试根据id获取用户</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getUserById</span><span class="params">()</span></span>&#123;</span><br><span class="line">        User user = iUserDao.getUserById(<span class="number">45</span>);</span><br><span class="line">        System.out.println(user);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>测试类中<font color=red> destory </font>方法中写了一句代码：session.commit()，它的作用是进行事务的手动提交。如果要设置自动提交。可以在<font color=red> openSession</font>方法中设置参数true。<br>当然此处我们可以不写这一句代码，因为这里测试的是查询方法。</p>
+</blockquote>
+<h2 id="1-2-保存操作"><a href="#1-2-保存操作" class="headerlink" title="1.2 保存操作"></a>1.2 保存操作</h2><ul>
+<li>同样，第一步还是在持久层接口中添加方法。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 保存操作</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">saveUser</span><span class="params">(User user)</span></span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>在用户的映射配置文件<font color=red>IUserDao.xml</font> 中进行配置。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- 保存操作 --&gt;</span><br><span class="line">    &lt;insert id=<span class="string">"saveUser"</span> parameterType=<span class="string">"com.zut.domain.User"</span>&gt; </span><br><span class="line">        <span class="function">insert into <span class="title">user</span><span class="params">(username,birthday,sex,address)</span> <span class="title">values</span> <span class="params">(#&#123;username&#125;,#&#123;birthday&#125;,#&#123;sex&#125;,#&#123;address&#125;)</span></span></span><br><span class="line"><span class="function">    &lt;/insert&gt;</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>这里的sql语句中也用到了#{ }，但注意，<font color=red size=2><strong>此处括号里的内容不能乱写!!!</strong></font><br>它必须和实体类中的属性名进行一一对应，这里实际上是通过实体类的<font color=red size=2>getXxx()</font>方法来拿到具体的值。</p>
+</blockquote>
+<ul>
+<li><p>在测试类中添加测试</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">mybatistest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> IUserDao iUserDao;</span><br><span class="line">    <span class="keyword">private</span> SqlSession session;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//初始化</span></span><br><span class="line">    <span class="meta">@Before</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        <span class="comment">//1.读取配置文件</span></span><br><span class="line">        InputStream in = Resources.getResourceAsStream(<span class="string">"SqlMapConfig.xml"</span>);</span><br><span class="line">        <span class="comment">//2.创建SqlSessionFactory工厂</span></span><br><span class="line">        SqlSessionFactoryBuilder builder = <span class="keyword">new</span> SqlSessionFactoryBuilder();</span><br><span class="line">        SqlSessionFactory factory = builder.build(in);</span><br><span class="line">        <span class="comment">//3.使用工厂生产sqlSessino对象</span></span><br><span class="line">        session = factory.openSession();</span><br><span class="line">        <span class="comment">//4.使用SqlSession创建Dao的代理对象</span></span><br><span class="line">        iUserDao = session.getMapper(IUserDao<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@After</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">destory</span><span class="params">()</span></span>&#123;</span><br><span class="line">        session.commit();</span><br><span class="line">        <span class="comment">//释放资源</span></span><br><span class="line">        session.close();</span><br><span class="line">    &#125;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 测试保存用户</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testsaveUser</span><span class="params">()</span></span>&#123;</span><br><span class="line">        User u = <span class="keyword">new</span> User();</span><br><span class="line">        u.setUsername(<span class="string">"王老五"</span>);</span><br><span class="line">        u.setBirthday(<span class="keyword">new</span> Date());</span><br><span class="line">        u.setSex(<span class="string">"女"</span>);</span><br><span class="line">        u.setAddress(<span class="string">"北京市莲花大道"</span>);</span><br><span class="line">        System.out.println(<span class="string">"保存前："</span> + u);</span><br><span class="line">        iUserDao.saveUser(u);</span><br><span class="line">        </span><br><span class="line">        System.out.println(<span class="string">"保存后："</span> + u);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><font color=red size=2>注意：</font>这里的<strong>session.close</strong>一定不能省略，否则会造成保存不成功，因为保存的操作涉及到事务的操作，必须进行事务的提交。</p>
+</blockquote>
+</li>
+<li><p>扩展操作：新增用户id的返回值</p>
+<p>新增用户后，同时还要返回当前新增用户的 id 值，因为 id 是由数据库的自动增长来实现的，所以就相当于我们要在新增后将自动增长 auto_increment 的值返回。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;insert id=<span class="string">"saveUser"</span> parameterType=<span class="string">"com.zut.domain.User"</span>&gt;    &lt;!-- parameterType代表参数类型 --&gt;</span><br><span class="line">       &lt;!-- 同时获取id的返回值 --&gt;</span><br><span class="line">       &lt;selectKey keyProperty=<span class="string">"id"</span> keyColumn=<span class="string">"id"</span> resultType=<span class="string">"int"</span> order=<span class="string">"AFTER"</span>&gt;</span><br><span class="line">           <span class="function">select <span class="title">LAST_INSERT_ID</span><span class="params">()</span></span></span><br><span class="line"><span class="function">       &lt;/selectKey&gt;</span></span><br><span class="line"><span class="function">       insert into <span class="title">user</span><span class="params">(username,birthday,sex,address)</span> <span class="title">values</span> <span class="params">(#&#123;username&#125;,#&#123;birthday&#125;,#&#123;sex&#125;,#&#123;address&#125;)</span></span></span><br><span class="line"><span class="function">       &lt;!-- 这里的#</span>&#123;&#125;里面的内容不能乱写，他是User实体类中getXXX（）方法的 XXX  此符号是通过get方法拿到值 --&gt;</span><br><span class="line">   &lt;/insert&gt;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<blockquote>
+<p>这里使用一个<font color=red size=2>selectKey </font>标签来获取。</p>
+</blockquote>
+<blockquote>
+<p>keyProperty 对应实体类中的属性名 。<br>keyColumn 对应数据库中的属性名 。<br>order 可以被设置为 BEFORE 或 AFTER。如果设置为 BEFORE，那么它会首先生成主键，设置 keyProperty 然后执行插入语句。如果设置为 AFTER，那么先执行插入语句，然后再执行 selectKey 中的语句。</p>
+</blockquote>
+<h2 id="1-3-更新操作"><a href="#1-3-更新操作" class="headerlink" title="1.3 更新操作"></a>1.3 更新操作</h2><ul>
+<li>在持久层中添加方法<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 修改用户</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> user</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">updateUser</span><span class="params">(User user)</span></span>;</span><br></pre></td></tr></table></figure></li>
+<li>在用户的映射配置文件<font color=red size=2>IUserDao.xml</font> 中进行配置。</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;update id=<span class="string">"updateUser"</span> parameterType=<span class="string">"com.zut.domain.User"</span>&gt;</span><br><span class="line">        update user set username = #&#123;username&#125;,birthday=#&#123;birthday&#125;,sex=#&#123;sex&#125;,address=#&#123;address&#125; where id=#&#123;id&#125;</span><br><span class="line"> &lt;/update&gt;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>在测试类中加入方法</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 测试更新用户</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">updateUser</span><span class="params">()</span></span>&#123;</span><br><span class="line">    User u = <span class="keyword">new</span> User();</span><br><span class="line">    u.setId(<span class="number">41</span>);</span><br><span class="line">    u.setUsername(<span class="string">"李老大"</span>);</span><br><span class="line">    u.setBirthday(<span class="keyword">new</span> Date());</span><br><span class="line">    u.setSex(<span class="string">"女"</span>);</span><br><span class="line">    u.setAddress(<span class="string">"北京市莲花大道"</span>);</span><br><span class="line"></span><br><span class="line">    iUserDao.updateUser(u);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="1-4-删除操作"><a href="#1-4-删除操作" class="headerlink" title="1.4 删除操作"></a>1.4 删除操作</h2><ul>
+<li>在持久层中添加方法<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 根据 id 删除用户</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> userId</span></span><br><span class="line"><span class="comment">* <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">deleteUser</span><span class="params">(Integer userId)</span></span>;</span><br></pre></td></tr></table></figure></li>
+<li>在用户的映射配置文件<font color=red size=2>IUserDao.xml</font> 中进行配置。</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- 删除用户 --&gt; </span><br><span class="line">&lt;delete id=<span class="string">"deleteUser"</span> parameterType=<span class="string">"java.lang.Integer"</span>&gt;</span><br><span class="line">	delete from user where id = #&#123;uid&#125;</span><br><span class="line">&lt;/delete&gt;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>在测试类中加入方法</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testDeleteUser</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">	<span class="keyword">int</span> res = userDao.deleteUser(<span class="number">52</span>);</span><br><span class="line">	System.out.println(res);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="1-5用户模糊查询"><a href="#1-5用户模糊查询" class="headerlink" title="1.5用户模糊查询"></a>1.5用户模糊查询</h2><ul>
+<li>在持久层中添加方法</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 根据姓名模糊查询多个用户</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> username</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function">List&lt;User&gt; <span class="title">listUserByName</span><span class="params">(String username)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在用户的映射配置文件<font color=red size=2>IUserDao.xml</font> 中进行配置。</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;select id=<span class="string">"listUserByName"</span> parameterType=<span class="string">"java.lang.String"</span> resultType=<span class="string">"com.zut.domain.User"</span>&gt;</span><br><span class="line">        select * from user where username like #&#123;name&#125;</span><br><span class="line">&lt;/select&gt;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>这里虽然返回结果为一个List，但resultType可以写为User，当有多个User时，Mybatis会自动帮我们封装为一个集合。</p>
+</blockquote>
+<ul>
+<li>在测试类中加入方法</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">listUserByName</span><span class="params">()</span></span>&#123;</span><br><span class="line">       List&lt;User&gt; users = iUserDao.listUserByName(<span class="string">"%王%"</span>);</span><br><span class="line">       <span class="keyword">for</span> (User user:users)&#123;</span><br><span class="line">           System.out.println(user);</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>执行结果如下：<br><img src="https://img-blog.csdnimg.cn/20200526205359894.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0xMdHVybg==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<blockquote>
+<ul>
+<li>我们在配置文件中没有加入%来作为模糊查询的条件，所以在传入字符串实参时，就需要给定模糊查询的标识%，配置文件中的#{name}也只是一个占位符，所以sql语句中为<br>？</li>
+</ul>
+</blockquote>
+<p>另一种配置方式：</p>
+<ul>
+<li>修改用户的映射配置文件<font color=red size=2>IUserDao.xml</font></li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;select id=<span class="string">"listUserByName"</span> parameterType=<span class="string">"java.lang.String"</span> resultType=<span class="string">"com.zut.domain.User"</span>&gt;</span><br><span class="line">        select * from user where username like <span class="string">'%$&#123;value&#125;%'</span></span><br><span class="line">&lt;/select&gt;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>修改测试方法</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">listUserByName</span><span class="params">()</span></span>&#123;</span><br><span class="line">      List&lt;User&gt; users = iUserDao.listUserByName(<span class="string">"王"</span>);</span><br><span class="line">      <span class="keyword">for</span> (User user:users)&#123;</span><br><span class="line">          System.out.println(user);</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行结果：<br><img src="https://img-blog.csdnimg.cn/20200526205250606.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0xMdHVybg==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<blockquote>
+<p>这里我们可以看到将以前的占位符改为了<font color=red>${value}</font>，者就是模糊查询的写法，<font color=red>注意！！! </font>  ${value}的写法是固定的，不能进行更改。</p>
+</blockquote>
+<ul>
+<li>#{ } 与 ${ }的区别<blockquote>
+<ul>
+<li>#{ }表示一个占位符</li>
+<li>${ }表示拼接sql串</li>
+</ul>
+</blockquote>
+</li>
+</ul>
+<h2 id="1-6-查询使用聚合函数"><a href="#1-6-查询使用聚合函数" class="headerlink" title="1.6 查询使用聚合函数"></a>1.6 查询使用聚合函数</h2><ul>
+<li><p>在持久层中添加方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 使用聚合函数查询用户总数</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">countUser</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在用户的映射配置文件<font color=red size=2>IUserDao.xml</font> 中进行配置。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;select id=<span class="string">"countUser"</span> resultType=<span class="string">"int"</span>&gt;</span><br><span class="line">        <span class="function">select <span class="title">count</span><span class="params">(id)</span> from user</span></span><br><span class="line"><span class="function">&lt;/select&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在测试类中加入方法</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 测试查询用户总数</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">countUser</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">int</span> count = iUserDao.countUser();</span><br><span class="line">        System.out.println(<span class="string">"用户记录总数为："</span> + count);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h1 id="2-Mybatis中一些参数的了解"><a href="#2-Mybatis中一些参数的了解" class="headerlink" title="2.Mybatis中一些参数的了解"></a>2.Mybatis中一些参数的了解</h1><hr>
+<h2 id="2-1-parameterType配置参数"><a href="#2-1-parameterType配置参数" class="headerlink" title="2.1 parameterType配置参数"></a>2.1 parameterType配置参数</h2><p>该属性之前已经简单介绍过，它的取值可以是基本类型、引用类型（例如String），还可以是实体类类型。这里说一下它的注意事项。</p>
+<blockquote>
+<ul>
+<li>基本类型和String我们可以直接写类型名称，也可以使用包名、类名的方式。</li>
+<li>实体类类型只能使用全限定类名。</li>
+<li>因为Mybatis它自动注册了基本类型和String类型的别名，所以使用时可以不写包名。<br>而我们自己也可以为我们的实体类注册别名从而不再写包名，这个后面会说到。</li>
+</ul>
+</blockquote>
+<h2 id="2-2-传递pojo对象"><a href="#2-2-传递pojo对象" class="headerlink" title="2.2 传递pojo对象"></a>2.2 传递pojo对象</h2><blockquote>
+<ul>
+<li>开发中通过 pojo 传递查询条件 ，查询条件是综合的查询条件，不仅包括用户查询条件还包括其它的查询条件（比如将用户购买商品信息也作为查询条件），这时可以使用包装对象传递输入参数。</li>
+</ul>
+</blockquote>
+<ul>
+<li>编写QueryVo</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 用于封装查询条件</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">QueryVo</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> User user;</span><br><span class="line">    <span class="comment">//如果还有其他的查询条件，就可以一并封住出来</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> User <span class="title">getUser</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> user;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setUser</span><span class="params">(User user)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.user = user;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>在持久层添加方法<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 根据查询条件模糊查询用户</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> vo</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function">List&lt;User&gt; <span class="title">listUsersByVo</span><span class="params">(QueryVo vo)</span></span>;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<ul>
+<li>在用户的映射配置文件<font color=red size=2>IUserDao.xml</font> 中进行配置。</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;select id=<span class="string">"listUsersByVo"</span> parameterType=<span class="string">"com.zut.domain.QueryVo"</span> resultType=<span class="string">"com.zut.domain.User"</span>&gt;</span><br><span class="line">      select * from user where username like #&#123;user.username&#125;</span><br><span class="line"> &lt;/select&gt;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>测试代码<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 测试根据Vo查询</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">listUsersByVo</span><span class="params">()</span></span>&#123;</span><br><span class="line">        QueryVo vo = <span class="keyword">new</span> QueryVo();</span><br><span class="line">        User user = <span class="keyword">new</span> User();</span><br><span class="line">        user.setUsername(<span class="string">"%王%"</span>);</span><br><span class="line"></span><br><span class="line">        vo.setUser(user);</span><br><span class="line">        List&lt;User&gt; users  = iUserDao.listUsersByVo(vo);</span><br><span class="line">        <span class="keyword">for</span> (User user1:users)&#123;</span><br><span class="line">            System.out.println(user1);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h1 id="3-Mybatis输出结果的封装"><a href="#3-Mybatis输出结果的封装" class="headerlink" title="3.Mybatis输出结果的封装"></a>3.Mybatis输出结果的封装</h1><hr>
+<h2 id="3-1resultType配置结果类型"><a href="#3-1resultType配置结果类型" class="headerlink" title="3.1resultType配置结果类型"></a>3.1resultType配置结果类型</h2><ul>
+<li>resultType和前面的parameterType类似，它支持基本类型和实体类类型。</li>
+<li>同时注册过别名的，也可以直接使用别名。</li>
+</ul>
+<blockquote>
+<p>需要注意的是：<br>         当类型为实体类型时，实体类的属性必须和查询语句中的列明保持一致。</p>
+</blockquote>
+<ul>
+<li>修改实体类</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> <span class="keyword">implements</span> <span class="title">Serializable</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> Integer userId;</span><br><span class="line">	<span class="keyword">private</span> String userName;</span><br><span class="line">	<span class="keyword">private</span> Date userBirthday;</span><br><span class="line">	<span class="keyword">private</span> String userSex;</span><br><span class="line">	<span class="keyword">private</span> String userAddress;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>测试结果如下<br><img src="https://img-blog.csdnimg.cn/20200603201829469.png" alt="在这里插入图片描述"></li>
+</ul>
+<blockquote>
+<p><font color=red>为什么userName有值呢？</font>，这是因为Mysql在windows下不区分大小写。所以userName等同于username.</p>
+</blockquote>
+<ul>
+<li>为了解决实体类属性名和数据库列名不一致的情况，有如下的解决办法:<br><strong>1.在 SQL 语句中为所有列起别名，使别名与实体类属性名一致（执行效率相对高，开发效率低）</strong></li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;select id=<span class="string">"findAll"</span> resultType=<span class="string">"com.zut.domain.User"</span>&gt;</span><br><span class="line">    SELECT id AS userId, username AS userName, birthday AS userBirthday, sex AS userSex, address AS userAddress FROM user</span><br><span class="line">&lt;/select&gt;</span><br></pre></td></tr></table></figure>
+
+<p><strong>2.使用resultMap标签建立查询的列名和实体类属性之间的映射关系（执行效率相对低，开发效率高）</strong></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&lt;mapper namespace=<span class="string">"com.zut.dao.IUserDao"</span>&gt;</span><br><span class="line">    &lt;!-- 配置 resultMap ，完成实体类与数据库表的映射 --&gt;</span><br><span class="line">    &lt;resultMap id=<span class="string">"userMap"</span> type=<span class="string">"cn.ykf.pojo.User"</span>&gt;</span><br><span class="line">        &lt;id property=<span class="string">"userId"</span> column=<span class="string">"id"</span> /&gt;</span><br><span class="line">        &lt;result property=<span class="string">"userName"</span> column=<span class="string">"username"</span>/&gt;</span><br><span class="line">        &lt;result property=<span class="string">"userBirthday"</span> column=<span class="string">"birthday"</span>/&gt;</span><br><span class="line">        &lt;result property=<span class="string">"userAddress"</span> column=<span class="string">"address"</span>/&gt;</span><br><span class="line">        &lt;result property=<span class="string">"userSex"</span> column=<span class="string">"sex"</span>/&gt;</span><br><span class="line">    &lt;/resultMap&gt;</span><br><span class="line">    &lt;!-- 配置查询所有用户 --&gt;</span><br><span class="line">    &lt;select id=<span class="string">"findAll"</span> resultMap=<span class="string">"userMap"</span>&gt;</span><br><span class="line">       SELECT * FROM user</span><br><span class="line">    &lt;/select&gt;</span><br><span class="line">&lt;/mapper&gt;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>property代表实体类中的属性名称，column代表列名</p>
+</blockquote>
+<h1 id="4-SqlMapConfig-xml配置文件"><a href="#4-SqlMapConfig-xml配置文件" class="headerlink" title="4.SqlMapConfig.xml配置文件"></a>4.SqlMapConfig.xml配置文件</h1><hr>
+<h2 id="4-1配置内容和顺序"><a href="#4-1配置内容和顺序" class="headerlink" title="4.1配置内容和顺序"></a>4.1配置内容和顺序</h2><p><img src="https://img-blog.csdnimg.cn/20200603203257407.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0xMdHVybg==,size_16,color_FFFFFF,t_70" alt=""></p>
+<blockquote>
+<p><font color=red size=2>注意：</font>配置文件要严格遵守上图的顺序，比如typeAliases标签不能写到settings标签前面，否则会出错。</p>
+</blockquote>
+<h2 id="4-2properties标签"><a href="#4-2properties标签" class="headerlink" title="4.2properties标签"></a>4.2properties标签</h2><ul>
+<li>在使用 properties 标签配置时，我们可以采用两种方式指定属性配置。</li>
+</ul>
+<p><strong>1.采用内部配置的方式</strong></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=<span class="string">"1.0"</span> encoding=<span class="string">"UTF-8"</span> ?&gt;</span><br><span class="line">&lt;!DOCTYPE configuration</span><br><span class="line">        PUBLIC <span class="string">"-//mybatis.org//DTD Config 3.0//EN"</span></span><br><span class="line">        <span class="string">"http://mybatis.org/dtd/mybatis-3-config.dtd"</span>&gt;</span><br><span class="line">&lt;configuration&gt;</span><br><span class="line">    &lt;!-- 全局变量 --&gt;</span><br><span class="line">    &lt;properties&gt;</span><br><span class="line">        &lt;property name=<span class="string">"driver"</span> value=<span class="string">"com.mysql.jdbc.Driver"</span>/&gt;</span><br><span class="line">        &lt;property name=<span class="string">"url"</span> value=<span class="string">"jdbc:mysql://localhost:3306/db_mybatis?characterEncoding=utf-8"</span>/&gt;</span><br><span class="line">        &lt;property name=<span class="string">"username"</span> value=<span class="string">"root"</span>/&gt;</span><br><span class="line">        &lt;property name=<span class="string">"password"</span> value=<span class="string">"ljt074517"</span>/&gt;</span><br><span class="line">    &lt;/properties&gt;</span><br><span class="line">    &lt;!--配置环境--&gt;</span><br><span class="line">    &lt;environments <span class="keyword">default</span>=<span class="string">"mysql"</span>&gt;</span><br><span class="line">        &lt;environment id=<span class="string">"mysql"</span>&gt;</span><br><span class="line">            &lt;!-- 配置事务类型 --&gt;</span><br><span class="line">            &lt;transactionManager type=<span class="string">"JDBC"</span>/&gt;</span><br><span class="line">            &lt;!-- 配置数据源（连接池） --&gt;</span><br><span class="line">            &lt;dataSource type=<span class="string">"POOLED"</span>&gt;</span><br><span class="line">                &lt;property name=<span class="string">"driver"</span> value=<span class="string">"$&#123;driver&#125;"</span>/&gt;</span><br><span class="line">                &lt;property name=<span class="string">"url"</span> value=<span class="string">"$&#123;url&#125;"</span>/&gt;</span><br><span class="line">                &lt;property name=<span class="string">"username"</span> value=<span class="string">"$&#123;username&#125;"</span>/&gt;</span><br><span class="line">                &lt;property name=<span class="string">"password"</span> value=<span class="string">"$&#123;password&#125;"</span>/&gt;</span><br><span class="line">            &lt;/dataSource&gt;</span><br><span class="line">        &lt;/environment&gt;</span><br><span class="line">    &lt;/environments&gt;</span><br><span class="line">    &lt;!-- 指定映射文件 --&gt;</span><br><span class="line">    &lt;mappers&gt;</span><br><span class="line">        &lt;mapper resource=<span class="string">"com/zut/dao/IUserDao.xml"</span>/&gt;</span><br><span class="line">    &lt;/mappers&gt;</span><br><span class="line">&lt;/configuration&gt;</span><br></pre></td></tr></table></figure>
+<p><strong>2.使用resource属性引入外部配置文件（常用）</strong></p>
+<ul>
+<li>在类路径下编写配置文件 <font color=red>jdbcConfig.properties</font><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">jdbc.driver=com.mysql.jdbc.Driver</span><br><span class="line">jdbc.url=jdbc:mysql:<span class="comment">//localhost:3306/db_mybatis?characterEncoding=utf-8</span></span><br><span class="line">jdbc.username=root</span><br><span class="line">jdbc.password=ljt074517</span><br></pre></td></tr></table></figure></li>
+<li>修改Mybatis配置文件</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- 引入外部文件  --&gt;</span><br><span class="line">    &lt;properties resource=<span class="string">"jdbcConfig.properties"</span>/&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--配置环境--&gt;</span><br><span class="line">    &lt;environments <span class="keyword">default</span>=<span class="string">"mysql"</span>&gt;</span><br><span class="line">        &lt;environment id=<span class="string">"mysql"</span>&gt;</span><br><span class="line">            &lt;!-- 配置事务类型 --&gt;</span><br><span class="line">            &lt;transactionManager type=<span class="string">"JDBC"</span>/&gt;</span><br><span class="line">            &lt;!-- 配置数据源（连接池） --&gt;</span><br><span class="line">            &lt;dataSource type=<span class="string">"POOLED"</span>&gt;</span><br><span class="line">                &lt;property name=<span class="string">"driver"</span> value=<span class="string">"$&#123;jdbc.driver&#125;"</span>/&gt;</span><br><span class="line">                &lt;property name=<span class="string">"url"</span> value=<span class="string">"$&#123;jdbc.url&#125;"</span>/&gt;</span><br><span class="line">                &lt;property name=<span class="string">"username"</span> value=<span class="string">"$&#123;jdbc.username&#125;"</span>/&gt;</span><br><span class="line">                &lt;property name=<span class="string">"password"</span> value=<span class="string">"$&#123;jdbc.password&#125;"</span>/&gt;</span><br><span class="line">            &lt;/dataSource&gt;</span><br><span class="line">        &lt;/environment&gt;</span><br><span class="line">    &lt;/environments&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-3typeAliases标签（类型别名）"><a href="#4-3typeAliases标签（类型别名）" class="headerlink" title="4.3typeAliases标签（类型别名）"></a>4.3typeAliases标签（类型别名）</h2><blockquote>
+<p>前面已经提到过别名这个概念，此标签的作用就是来配置别名</p>
+</blockquote>
+<ul>
+<li>当我们要给某个实体类指定别名时，就可以在 SqlMapConfig.xml 中去配置</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- 配置别名 --&gt;</span><br><span class="line">&lt;typeAliases&gt;</span><br><span class="line">   &lt;typeAlias type="com.zut.domain.User" alias="user"&gt;&lt;/typeAlias&gt;</span><br><span class="line">&lt;/typeAliases&gt;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<ul>
+<li>type属性用于指定实体类的全限定类名，alias标签用于指定别名。</li>
+<li>也就是说当我们要用User这个实体类作为parameterType或resultType的类型时，可以直接写为user</li>
+</ul>
+</blockquote>
+<ul>
+<li>当我们需要给多个实体类起别名时，可以使用package标签</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- 配置别名 --&gt;</span><br><span class="line"> &lt;typeAliases&gt;</span><br><span class="line">     &lt;<span class="keyword">package</span> name=<span class="string">"com.zut.domain"</span>/&gt;</span><br><span class="line"> &lt;/typeAliases&gt;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>package 标签指定要配置别名的包，当指定之后，该包下的所有实体类都会注册别名，并且别名就是类名，不再区分大小写</p>
+</blockquote>
+<ul>
+<li>package标签还有另外一个作用：注册指定包下的所有 mapper 接口</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- 配置映射信息 --&gt;</span><br><span class="line"> &lt;mappers&gt;</span><br><span class="line">     &lt;<span class="keyword">package</span> name=<span class="string">"com.zut.dao"</span>/&gt;</span><br><span class="line"> &lt;/mappers&gt;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<ul>
+<li>这样配置后，我们就无需一个个的映射Mapper接口</li>
+<li>此种方法要求 mapper 接口名称和 mapper 映射文件名称相同，且放在同一个目录中。<br><img src="https://img-blog.csdnimg.cn/20200603205821661.png" alt="在这里插入图片描述"></li>
+</ul>
+</blockquote>
+
+  </section>
+
+  <section class="post-comments">
+
+    <!-- 将评论系统（例如Disqus、多说、友言、畅言等）提供的代码片段粘贴在这里 -->
+    
+</section>
+
+
+</article>
+
+
+            <footer class="footer">
+
+    <span class="footer__copyright">&copy; 2014-2015. | 由<a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>强力驱动 | 主题<a href="https://github.com/someus/huno" target="_blank" rel="noopener">Huno</a></span>
+    
+</footer>
+        </div>
+    </div>
+
+    <!-- js files -->
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/scale.fix.js"></script>
+    
+
+    
+
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript"> 
+        $(document).ready(function(){
+            MathJax.Hub.Config({ 
+                tex2jax: {inlineMath: [['[latex]','[/latex]'], ['\\(','\\)']]} 
+            });
+        });
+    </script>
+
+
+    
+
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/awesome-toc.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $.awesome_toc({
+                overlay: true,
+                contentId: "post-content",
+            });
+        });
+    </script>
+
+
+    
+    
+    <!--kill ie6 -->
+<!--[if IE 6]>
+  <script src="//letskillie6.googlecode.com/svn/trunk/2/zh_CN.js"></script>
+<![endif]-->
+
+</body>
+</html>
