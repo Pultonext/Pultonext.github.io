@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    
+
+    <title>
+      Mybatis学习笔记--04 | DarkADays 
+    </title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    
+      <meta name="author" content="DarkADays">
+    
+    
+
+    <meta name="description" content="1.Mybatis中的延迟加载 1.1延迟加载和立即加载 在用户和账户的关系中，假设此时我们有1个用户，该用户有100个账户。那么此时有这样一个问题。  当我们查询用户时，要不要把关联的账户也一起查询出来？ 当我们查询账户时，要不要把关联的用户也一起查询出来？   显然当我们查询用户时，它的账户信息需要的时候再去查询，因为它有100个账户，如果全部查询出来非常的耗时，这就是所谓的延迟加载。而查询账">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Mybatis学习笔记--04 | DarkADays">
+<meta property="og:url" content="http://yoursite.com/2020/07/26/Mybatis%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0--04/index.html">
+<meta property="og:site_name" content="DarkADays">
+<meta property="og:description" content="1.Mybatis中的延迟加载 1.1延迟加载和立即加载 在用户和账户的关系中，假设此时我们有1个用户，该用户有100个账户。那么此时有这样一个问题。  当我们查询用户时，要不要把关联的账户也一起查询出来？ 当我们查询账户时，要不要把关联的用户也一起查询出来？   显然当我们查询用户时，它的账户信息需要的时候再去查询，因为它有100个账户，如果全部查询出来非常的耗时，这就是所谓的延迟加载。而查询账">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200705101345698.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0xMdHVybg==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2020070510250499.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200706214438415.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0xMdHVybg==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200706215409367.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0xMdHVybg==,size_16,color_FFFFFF,t_70">
+<meta property="article:published_time" content="2020-07-26T03:37:01.026Z">
+<meta property="article:modified_time" content="2020-07-26T03:38:09.476Z">
+<meta property="article:author" content="DarkADays">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/20200705101345698.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0xMdHVybg==,size_16,color_FFFFFF,t_70">
+    
+    
+    
+      <link rel="icon" type="image/x-icon" href="/favicon.png">
+    
+    
+<link rel="stylesheet" href="/css/uno.css">
+
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+    
+<link rel="stylesheet" href="/css/archive.css">
+
+    
+<link rel="stylesheet" href="/css/china-social-icon.css">
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+
+    <span class="mobile btn-mobile-menu">
+        <i class="icon icon-list btn-mobile-menu__icon"></i>
+        <i class="icon icon-x-circle btn-mobile-close__icon hidden"></i>
+    </span>
+
+    
+
+<header class="panel-cover panel-cover--collapsed">
+
+
+  <div class="panel-main">
+
+  
+    <div class="panel-main__inner panel-inverted">
+    <div class="panel-main__content">
+
+        
+
+        <h1 class="panel-cover__title panel-title"><a href="/" title="link to homepage">DarkADays</a></h1>
+        <hr class="panel-cover__divider" />
+
+        
+
+        <div class="navigation-wrapper">
+
+          <nav class="cover-navigation cover-navigation--primary">
+            <ul class="navigation">
+
+              
+                
+                <li class="navigation__item"><a href="/#blog" title="" class="blog-button">首页</a></li>
+              
+                
+                <li class="navigation__item"><a href="/about" title="" class="">关于</a></li>
+              
+                
+                <li class="navigation__item"><a href="/archive" title="" class="">归档</a></li>
+              
+
+            </ul>
+          </nav>
+
+          <!-- ----------------------------
+To add a new social icon simply duplicate one of the list items from below
+and change the class in the <i> tag to match the desired social network
+and then add your link to the <a>. Here is a full list of social network
+classes that you can use:
+
+    icon-social-500px
+    icon-social-behance
+    icon-social-delicious
+    icon-social-designer-news
+    icon-social-deviant-art
+    icon-social-digg
+    icon-social-dribbble
+    icon-social-facebook
+    icon-social-flickr
+    icon-social-forrst
+    icon-social-foursquare
+    icon-social-github
+    icon-social-google-plus
+    icon-social-hi5
+    icon-social-instagram
+    icon-social-lastfm
+    icon-social-linkedin
+    icon-social-medium
+    icon-social-myspace
+    icon-social-path
+    icon-social-pinterest
+    icon-social-rdio
+    icon-social-reddit
+    icon-social-skype
+    icon-social-spotify
+    icon-social-stack-overflow
+    icon-social-steam
+    icon-social-stumbleupon
+    icon-social-treehouse
+    icon-social-tumblr
+    icon-social-twitter
+    icon-social-vimeo
+    icon-social-xbox
+    icon-social-yelp
+    icon-social-youtube
+    icon-social-zerply
+    icon-mail
+
+-------------------------------->
+
+<!-- add social info here -->
+
+
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="panel-cover--overlay"></div>
+  </div>
+</header>
+
+    <div class="content-wrapper">
+        <div class="content-wrapper__inner entry">
+            
+
+<article class="post-container post-container--single">
+
+  <header class="post-header">
+    
+    <h1 class="post-title">Mybatis学习笔记--04</h1>
+
+    
+
+    <div class="post-meta">
+      <time datetime="2020-07-26" class="post-meta__date date">2020-07-26</time> 
+
+      <span class="post-meta__tags tags">
+
+          
+
+          
+
+      </span>
+    </div>
+    
+    
+
+  </header>
+
+  <section id="post-content" class="article-content post">
+    <h1 id="1-Mybatis中的延迟加载"><a href="#1-Mybatis中的延迟加载" class="headerlink" title="1.Mybatis中的延迟加载"></a>1.Mybatis中的延迟加载</h1><hr>
+<h2 id="1-1延迟加载和立即加载"><a href="#1-1延迟加载和立即加载" class="headerlink" title="1.1延迟加载和立即加载"></a>1.1延迟加载和立即加载</h2><ul>
+<li><p>在用户和账户的关系中，假设此时我们有1个用户，该用户有100个账户。那么此时有这样一个问题。</p>
+<ul>
+<li>当我们查询用户时，要不要把关联的账户也一起查询出来？</li>
+<li>当我们查询账户时，要不要把关联的用户也一起查询出来？</li>
+</ul>
+</li>
+<li><p>显然当我们查询用户时，它的账户信息需要的时候再去查询，<strong>因为它有100个账户，如果全部查询出来非常的耗时</strong>，这就是所谓的<code>延迟加载</code>。而查询账户时，我们就可以同时把它对应的用户信息就查询出来，因为它只对应一个用户。这就是<code>立即加载</code>。</p>
+</li>
+<li><p>延迟加载：</p>
+<ul>
+<li>在需要用到数据时才进行加载，不需要用到数据时就不加载数据。延迟加载也称懒加载。</li>
+<li>在<strong>一对多或多对多</strong>的关系中通常采用延迟加载。</li>
+</ul>
+</li>
+<li><p>立即加载：</p>
+<ul>
+<li>不管是否需要数据，只要一进行查询，就会把相关联的数据一并查询出来。</li>
+<li>在<strong>多对一或一对一</strong>的关系中通常采用立即加载。</li>
+</ul>
+</li>
+</ul>
+<h2 id="1-2一对一的延迟加载"><a href="#1-2一对一的延迟加载" class="headerlink" title="1.2一对一的延迟加载"></a>1.2一对一的延迟加载</h2><ul>
+<li><p>需求：查询账户信息时，实现延迟加载，如果不需要用户信息，只查询账户信息。</p>
+</li>
+<li><p>账户的持久层映射文件：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&lt;mapper namespace=<span class="string">"com.zut.dao.IAccountDao"</span>&gt;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    &lt;!-- 定义可以封装带有User的Account的 resultMap --&gt;</span><br><span class="line">    &lt;resultMap id=<span class="string">"AccountUserMap"</span> type=<span class="string">"Account"</span>&gt;</span><br><span class="line">        &lt;id property="id" column="id"&gt;&lt;/id&gt;</span><br><span class="line">        &lt;result property="uid" column="uid"&gt;&lt;/result&gt;</span><br><span class="line">        &lt;result property="money" column="money"&gt;&lt;/result&gt;</span><br><span class="line">        &lt;!-- 关联User对象 --&gt;</span><br><span class="line">        &lt;association property="user" javaType="User" column="uid" select="com.zut.dao.IUserDao.getUserById"&gt;&lt;/association&gt;</span><br><span class="line">    &lt;/resultMap&gt;</span><br><span class="line"></span><br><span class="line">    &lt;select id=<span class="string">"findAll"</span> resultMap=<span class="string">"AccountUserMap"</span>&gt;</span><br><span class="line">       SELECT * FROM account</span><br><span class="line">    &lt;/select&gt;</span><br><span class="line">&lt;/mapper&gt;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<ul>
+<li>assocation标签中的select属性<code>表示我们要调用的映射语句的id</code>，它会从column属性指定的列中检索数据，<code>作为参数传递给目标select语句</code></li>
+<li>column指定我们<code>要传递给select映射的参数</code>。</li>
+</ul>
+</blockquote>
+</li>
+<li><p>用户的持久层映射文件：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;mapper namespace=<span class="string">"com.zut.dao.IUserDao"</span>&gt;</span><br><span class="line">    &lt;select id=<span class="string">"getUserById"</span> parameterType=<span class="string">"java.lang.Integer"</span> resultType=<span class="string">"User"</span>&gt;</span><br><span class="line">        select * from user where id=#&#123;aa&#125;</span><br><span class="line">    &lt;/select&gt;</span><br><span class="line">&lt;/mapper&gt;</span><br></pre></td></tr></table></figure></li>
+<li><p>上面的都完成之后，我们需要在Mybatis的主配置文件中添加开启延迟加载的配置：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- 开启延迟加载 --&gt;</span><br><span class="line">&lt;settings&gt;</span><br><span class="line">    &lt;setting name=<span class="string">"lazyLoadingEnabled"</span> value=<span class="string">"true"</span>/&gt;</span><br><span class="line">    &lt;setting name=<span class="string">"aggressiveLazyLoading"</span> value=<span class="string">"false"</span>/&gt;</span><br><span class="line">&lt;/settings&gt;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<ul>
+<li>注意在写setting标签时要写到正确的位置。具体参考Mybatis的官方文档：<a href="https://mybatis.org/mybatis-3/zh/configuration.html#settings" target="_blank" rel="noopener">Mybatis的XML配置</a></li>
+</ul>
+</blockquote>
+</li>
+<li><p>测试结果如下：<br><img src="https://img-blog.csdnimg.cn/20200705101345698.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0xMdHVybg==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<blockquote>
+<ul>
+<li>我们发现只是将Account对象查询出来，而没有查询User对象。</li>
+</ul>
+</blockquote>
+</li>
+</ul>
+<h2 id="1-3一对多实现延迟加载"><a href="#1-3一对多实现延迟加载" class="headerlink" title="1.3一对多实现延迟加载"></a>1.3一对多实现延迟加载</h2><ul>
+<li>需求：查询用户时实现延迟加载。</li>
+<li>用户的持久层映射文件：<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&lt;mapper namespace=<span class="string">"com.zut.dao.IUserDao"</span>&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!-- 配置User的resultMap --&gt;</span><br><span class="line">    &lt;resultMap id=<span class="string">"UserAccountMap"</span> type=<span class="string">"User"</span>&gt;</span><br><span class="line">        &lt;id property="id" column="id"&gt;&lt;/id&gt;</span><br><span class="line">        &lt;result property="username" column="username"&gt;&lt;/result&gt;</span><br><span class="line">        &lt;result property="sex" column="sex"&gt;&lt;/result&gt;</span><br><span class="line">        &lt;result property="birthday" column="birthday"&gt;&lt;/result&gt;</span><br><span class="line">        &lt;result property="address" column="address"&gt;&lt;/result&gt;</span><br><span class="line">        &lt;!-- 配置user对象中accounts集合的映射 --&gt;</span><br><span class="line">        &lt;collection property="accounts" ofType="Account" select="com.zut.dao.IAccountDao.getAccountById" column="id"&gt;&lt;/collection&gt;</span><br><span class="line">    &lt;/resultMap&gt;</span><br><span class="line"></span><br><span class="line">    &lt;select id=<span class="string">"findAll"</span> resultMap=<span class="string">"UserAccountMap"</span>&gt;</span><br><span class="line">       SELECT * from user</span><br><span class="line">    &lt;/select&gt;</span><br><span class="line">&lt;/mapper&gt;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<ul>
+<li>这里同样在collection标签中使用 select属性和column属性，作用和之前的一样。</li>
+</ul>
+</blockquote>
+</li>
+<li>账户的持久层映射文件：<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;mapper namespace=<span class="string">"com.zut.dao.IAccountDao"</span>&gt;</span><br><span class="line">    &lt;select id=<span class="string">"getAccountById"</span> parameterType=<span class="string">"java.lang.Integer"</span> resultType=<span class="string">"account"</span>&gt;</span><br><span class="line">        select * from account where uid = #&#123;uid&#125;</span><br><span class="line">    &lt;/select&gt;</span><br><span class="line">&lt;/mapper&gt;</span><br></pre></td></tr></table></figure></li>
+<li>测试结果如下：<br><img src="https://img-blog.csdnimg.cn/2020070510250499.png" alt="在这里插入图片描述"><blockquote>
+<p>同样没有加载账户的信息。</p>
+</blockquote>
+</li>
+</ul>
+<h1 id="2-Mybatis中的缓存"><a href="#2-Mybatis中的缓存" class="headerlink" title="2.Mybatis中的缓存"></a>2.Mybatis中的缓存</h1><ul>
+<li>什么是缓存？<ul>
+<li>存在内存中的临时数据，<code>减少和数据库的交互次数</code>，提高执行效率。</li>
+</ul>
+</li>
+<li>什么样的数据能使用缓存，什么样的数据不能使用<ul>
+<li>适用于缓存：<ul>
+<li>经常查询并且不经常改变的</li>
+<li>数据的正确与否对最终结果影响不大的</li>
+</ul>
+</li>
+<li>不适用于缓存：<ul>
+<li>经常改变的数据</li>
+<li>数据的正确与否，对结果影响很大的</li>
+<li>例如：商品的库存、银行的汇率、股市的牌价   </li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="2-1-Mybaits中的一级缓存"><a href="#2-1-Mybaits中的一级缓存" class="headerlink" title="2.1 Mybaits中的一级缓存"></a>2.1 Mybaits中的一级缓存</h2><ul>
+<li><p>一级缓存:</p>
+<ul>
+<li>它指的是Mybatis中SqlSession对象的缓存。当我们执行查询之后，<code>查询的结果会同时存入到SqlSession为我们提供的一块区域中</code>。该区域的结构是一个<strong>Map</strong>。当我们再次查询同样的数据，<code>mybatis会先去sqlsession中查询是否有</code>，有的话就直接拿出来用。当SqlSession对象消失时，Mybatis的一级缓存就消失了 </li>
+<li>一级缓存是 SqlSession 级别的缓存，只要 SqlSession 没有 flush 或 close，它就会存在。<strong>当调用 SqlSession 的修改、添加、删除、commit()、close()、clearCache() 等方法时，就会清空一级缓存</strong>。</li>
+</ul>
+</li>
+<li><p>一级缓存的流程图如下：<br><img src="https://img-blog.csdnimg.cn/20200706214438415.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0xMdHVybg==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<ul>
+<li>第一次发起查询用户 id 为 1 的用户信息，Mybatis 会先去找缓存中是否有 id 为 1 的用户信息，如果没有，从数据库查询用户信息。 </li>
+<li>得到用户信息，将用户信息存储到一级缓存中。</li>
+<li>如果 sqlSession 去执行 commit 操作（执行插入、更新、删除），那么 Mybatis 就会<strong>清空 SqlSession 中的一级缓存</strong>，这样做的目的为了让缓存中存储的是最新的信息，避免脏读</li>
+<li>第二次发起查询用户 id 为 1 的用户信息，先去找缓存中是否有 id 为 1 的用户信息，缓存中有，直接从缓存中获取用户信息<blockquote>
+<ul>
+<li>Mybatis中默认就是使用一级缓存的，不需要配置。</li>
+<li><strong>一级缓存中存放的是对象</strong>（其实就是Map结构）</li>
+</ul>
+</blockquote>
+<h2 id="2-2Mybatis中的二级缓存"><a href="#2-2Mybatis中的二级缓存" class="headerlink" title="2.2Mybatis中的二级缓存"></a>2.2Mybatis中的二级缓存</h2></li>
+</ul>
+</li>
+<li><p>它指的是Mybatis中的SqlSessionFactry对象的缓存。由同一个SqlSessionFactory对象创建的SqlSession共享其缓存.</p>
+</li>
+<li><p>二级缓存是 mapper 映射级别的缓存，多个 SqlSession 去操作同一个 Mapper 映射的 sql 语句，多个SqlSession 可以共用二级缓存，二级缓存是跨 SqlSession 的。</p>
+</li>
+<li><p>二级缓存的流程图如下：<br><img src="https://img-blog.csdnimg.cn/20200706215409367.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0xMdHVybg==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<blockquote>
+<p>意味同一个SqlSessionFactory创建的SqlSession可以共享二级缓存的内容</p>
+</blockquote>
+</li>
+<li><p>如果要使用二级缓存，需要做以下配置：</p>
+</li>
+<li><p>让Mybatis框架支持二级缓存，即在主配置文件中配置：</p>
+</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;settings&gt;</span><br><span class="line">&lt;!-- 开启二级缓存的支持 --&gt; &lt;setting name=<span class="string">"cacheEnabled"</span> value=<span class="string">"true"</span>/&gt;</span><br><span class="line">&lt;/settings&gt;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>因为 cacheEnabled 的取值默认就为 true，所以这一步可以省略不配置。为 true 代表开启二级缓存；为false 代表不开启二级缓存。</p>
+</blockquote>
+<ul>
+<li>让当前的映射文件支持二级缓存，即在映射配置文件中配置：</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;mapper namespace=<span class="string">"cn.ykf.mapper.UserMapper"</span>&gt;</span><br><span class="line">    &lt;!-- 使用缓存 --&gt;</span><br><span class="line">    &lt;cache/&gt;</span><br><span class="line">&lt;/mapper&gt;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>让当前的操作支持二级缓存：<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;select id=<span class="string">"findById"</span> resultType=<span class="string">"user"</span> parameterType=<span class="string">"int"</span> useCache=<span class="string">"true"</span>&gt;</span><br><span class="line">select * from user where id = #&#123;uid&#125;</span><br><span class="line">&lt;/select&gt;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>将 UserDao.xml 映射文件中的select标签中设置 useCache=”true”代表当前这个 statement 要使用二级缓存，如果不使用二级缓存可以设置为 false。</p>
+</blockquote>
+</li>
+</ul>
+<blockquote>
+<ul>
+<li><code>注意：</code></li>
+<li>当我们使用二级缓存的时候，<code>所缓存的类一定要实现 java.io.Serializable 接口</code>，这样才可以使用序列化的方式来保存对象。</li>
+<li>由于是序列化保存对象，所以<code>二级缓存中存放的是数据，而不是整个对象</code>。</li>
+</ul>
+</blockquote>
+<h1 id="3-Mybatis中的注解开发"><a href="#3-Mybatis中的注解开发" class="headerlink" title="3.Mybatis中的注解开发"></a>3.Mybatis中的注解开发</h1><hr>
+<h2 id="3-1Mybatis的常用注解"><a href="#3-1Mybatis的常用注解" class="headerlink" title="3.1Mybatis的常用注解"></a>3.1Mybatis的常用注解</h2><table>
+<thead>
+<tr>
+<th>注解</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><figure class="highlight plain"><figcaption><span>实现新增</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">&#96;&#96;&#96;@Update&#96;&#96;&#96;|实现更新</span><br><span class="line">&#96;&#96;&#96;@Delete &#96;&#96;&#96;| 实现删除</span><br><span class="line">&#96;&#96;&#96;@Select&#96;&#96;&#96;| 实现查询</span><br><span class="line">&#96;&#96;&#96;@Result&#96;&#96;&#96;|实现结果集封装</span><br><span class="line">&#96;&#96;&#96;@Results&#96;&#96;&#96;|可以与@Result 一起使用，封装多个结果集</span><br><span class="line">&#96;&#96;&#96;@ResultMap&#96;&#96;&#96;|实现引用@Results 定义的封装</span><br><span class="line">&#96;&#96;&#96;@One&#96;&#96;&#96;|实现一对一结果集封装</span><br><span class="line">&#96;&#96;&#96;@Many&#96;&#96;&#96;|实现一对多结果集封装</span><br><span class="line">&#96;&#96;&#96;@SelectProvider&#96;&#96;&#96;|实现动态 SQL 映射</span><br><span class="line">&#96;&#96;&#96;@CacheNamespace&#96;&#96;&#96;|实现注解二级缓存的使用</span><br><span class="line"></span><br><span class="line">## 3.2使用Mybatis注解实现单表CRUD</span><br><span class="line">- 用户实体类接口层的IUserDao的代码如下：</span><br><span class="line"></span><br><span class="line">&#96;&#96;&#96;java</span><br><span class="line">&#x2F;**</span><br><span class="line"> * 在mybatis中，针对CRUD一共有四个注解</span><br><span class="line"> * @Select @Insert @Update @Delete</span><br><span class="line"> *&#x2F;</span><br><span class="line">public interface IUserDao &#123;</span><br><span class="line"></span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 查询所有用户</span><br><span class="line">     * @return</span><br><span class="line">     *&#x2F;</span><br><span class="line">    @Select(&quot;select * from user&quot;)</span><br><span class="line">    List&lt;User&gt; findAll();</span><br><span class="line"></span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 保存用户</span><br><span class="line">     * @param user</span><br><span class="line">     *&#x2F;</span><br><span class="line">    @Insert(&quot;insert into user(username,address,sex,birthday) values(#&#123;username&#125;,#&#123;address&#125;,#&#123;sex&#125;,#&#123;birthday&#125;)&quot;)</span><br><span class="line">    void saveUser(User user);</span><br><span class="line"></span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 更新用户</span><br><span class="line">     * @param user</span><br><span class="line">     *&#x2F;</span><br><span class="line">    @Update(&quot;update user set username&#x3D;#&#123;username&#125;,address&#x3D;#&#123;address&#125;,birthday&#x3D;#&#123;birthday&#125;,sex&#x3D;#&#123;sex&#125; where id&#x3D;#&#123;id&#125;&quot;)</span><br><span class="line">    void updateUser(User user);</span><br><span class="line"></span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 删除用户</span><br><span class="line">     * @param id</span><br><span class="line">     *&#x2F;</span><br><span class="line">    @Delete(&quot;delete from user where id&#x3D;#&#123;aa&#125;&quot;)</span><br><span class="line">    void deleteUser(Integer id);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></td>
+<td></td>
+</tr>
+<tr>
+<td>&gt; 上面的写法要求数据库里的列名和实体类中的属性一致，如果出现不一致的情况，要使用<code>@Result、@Results、@ResultMap</code>等标签。如下所示：</td>
+<td></td>
+</tr>
+</tbody></table>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">IUserDao</span> </span>&#123;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 查询所有用户</span></span><br><span class="line"><span class="comment">* <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="meta">@Select</span>(<span class="string">"select * from user"</span>)</span><br><span class="line"><span class="meta">@Results</span>(id=<span class="string">"userMap"</span>,</span><br><span class="line">value= &#123;</span><br><span class="line">	<span class="meta">@Result</span>(id=<span class="keyword">true</span>,column=<span class="string">"id"</span>,property=<span class="string">"userId"</span>),</span><br><span class="line">	<span class="meta">@Result</span>(column=<span class="string">"username"</span>,property=<span class="string">"userName"</span>),</span><br><span class="line">	<span class="meta">@Result</span>(column=<span class="string">"sex"</span>,property=<span class="string">"userSex"</span>),</span><br><span class="line">	<span class="meta">@Result</span>(column=<span class="string">"address"</span>,property=<span class="string">"userAddress"</span>),</span><br><span class="line">	<span class="meta">@Result</span>(column=<span class="string">"birthday"</span>,property=<span class="string">"userBirthday"</span>)</span><br><span class="line">&#125;)</span><br><span class="line"><span class="function">List&lt;User&gt; <span class="title">findAll</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+<h2 id="3-3使用注解实现复杂关系映射的开发"><a href="#3-3使用注解实现复杂关系映射的开发" class="headerlink" title="3.3使用注解实现复杂关系映射的开发"></a>3.3使用注解实现复杂关系映射的开发</h2><blockquote>
+<p>实现复杂关系映射之前我们可以在映射文件中通过配置<resultMap>来实现，在使用注解开发时我们需要借<br>助<code>@Results 注解，@Result 注解，@One 注解，@Many</code>注解。</p>
+</blockquote>
+<ul>
+<li><p>@Results 注解：<br>  代替的是标签resultMap<br>  该注解中可以使用单个@Result 注解，也可以使用@Result 集合<br>  @Results（{@Result（），@Result（）}）或@Results（@Result（））</p>
+</li>
+<li><p>@Resutl 注解<br>  代替了 id标签和result标签<br>  @Result 中 属性介绍：<br>   id ：        是否是主键字段<br>  column：     数据库的列名<br>  property： 需要装配的属性名<br>  one ：    需要使用的@One 注解（@Result（one=@One）（）））<br>  many：     需要使用的@Many 注解（@Result（many=@many）（）））</p>
+</li>
+<li><p>@One 注解（一对一）</p>
+<ul>
+<li>代替了<assocation>标签，是多表查询的关键，在注解中用来指定子查询返回单一对象。</li>
+</ul>
+</li>
+<li><p>@One 注解属性介绍：</p>
+<ul>
+<li>select 指定用来多表查询的 sqlmapper<br>fetchType 会覆盖全局的配置参数 lazyLoadingEnabled。<br>使用格式：<br>@Result(column=” “,property=””,one=@One(select=””))</li>
+</ul>
+</li>
+<li><p>@Many 注解（多对一）</p>
+<ul>
+<li>代替了<Collection>标签,是是多表查询的关键，在注解中用来指定子查询返回对象集合。<br>注意：聚集元素用来处理“一对多”的关系。需要指定映射的 Java 实体类的属性，属性的 javaType（一般为 ArrayList）但是注解中可以不定义；<br>使用格式：<br>@Result(property=””,column=””,many=@Many(select=””))</li>
+</ul>
+</li>
+</ul>
+
+  </section>
+
+  <section class="post-comments">
+
+    <!-- 将评论系统（例如Disqus、多说、友言、畅言等）提供的代码片段粘贴在这里 -->
+    
+</section>
+
+
+</article>
+
+
+            <footer class="footer">
+
+    <span class="footer__copyright">&copy; 2014-2015. | 由<a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>强力驱动 | 主题<a href="https://github.com/someus/huno" target="_blank" rel="noopener">Huno</a></span>
+    
+</footer>
+        </div>
+    </div>
+
+    <!-- js files -->
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/scale.fix.js"></script>
+    
+
+    
+
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript"> 
+        $(document).ready(function(){
+            MathJax.Hub.Config({ 
+                tex2jax: {inlineMath: [['[latex]','[/latex]'], ['\\(','\\)']]} 
+            });
+        });
+    </script>
+
+
+    
+
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/awesome-toc.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $.awesome_toc({
+                overlay: true,
+                contentId: "post-content",
+            });
+        });
+    </script>
+
+
+    
+    
+    <!--kill ie6 -->
+<!--[if IE 6]>
+  <script src="//letskillie6.googlecode.com/svn/trunk/2/zh_CN.js"></script>
+<![endif]-->
+
+</body>
+</html>

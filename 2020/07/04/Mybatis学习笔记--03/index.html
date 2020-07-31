@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    
+
+    <title>
+      Mybatis学习笔记--03 | DarkADays 
+    </title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    
+      <meta name="author" content="DarkADays">
+    
+    
+
+    <meta name="description" content="1.Mybatis连接池  涉及到对数据库的操作，我们就不得不提到连接池技术，同样在Mybatis中也存在连接池技术，在&#x3D;&#x3D;SqlMapConfig.xml&#x3D;&#x3D;配置文件中，通过 &lt;dataSource type&#x3D;&quot;POOLED&quot;&gt;来实现Mybatis中连接池的配置。   上面type&#x3D;POOLED就代表一种数据源类型，在Mybatis中共提供了三种数据源类型">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Mybatis学习笔记--03 | DarkADays">
+<meta property="og:url" content="http://yoursite.com/2020/07/04/Mybatis%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0--03/index.html">
+<meta property="og:site_name" content="DarkADays">
+<meta property="og:description" content="1.Mybatis连接池  涉及到对数据库的操作，我们就不得不提到连接池技术，同样在Mybatis中也存在连接池技术，在&#x3D;&#x3D;SqlMapConfig.xml&#x3D;&#x3D;配置文件中，通过 &lt;dataSource type&#x3D;&quot;POOLED&quot;&gt;来实现Mybatis中连接池的配置。   上面type&#x3D;POOLED就代表一种数据源类型，在Mybatis中共提供了三种数据源类型">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200704093511511.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0xMdHVybg==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200704093520725.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0xMdHVybg==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200704093953970.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0xMdHVybg==,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200704154855770.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200704160120296.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200704160853229.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200704161547940.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200704161752968.png">
+<meta property="article:published_time" content="2020-07-04T08:26:31.098Z">
+<meta property="article:modified_time" content="2020-07-04T08:27:54.604Z">
+<meta property="article:author" content="DarkADays">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/20200704093511511.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0xMdHVybg==,size_16,color_FFFFFF,t_70">
+    
+    
+    
+      <link rel="icon" type="image/x-icon" href="/favicon.png">
+    
+    
+<link rel="stylesheet" href="/css/uno.css">
+
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+    
+<link rel="stylesheet" href="/css/archive.css">
+
+    
+<link rel="stylesheet" href="/css/china-social-icon.css">
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+
+    <span class="mobile btn-mobile-menu">
+        <i class="icon icon-list btn-mobile-menu__icon"></i>
+        <i class="icon icon-x-circle btn-mobile-close__icon hidden"></i>
+    </span>
+
+    
+
+<header class="panel-cover panel-cover--collapsed">
+
+
+  <div class="panel-main">
+
+  
+    <div class="panel-main__inner panel-inverted">
+    <div class="panel-main__content">
+
+        
+
+        <h1 class="panel-cover__title panel-title"><a href="/" title="link to homepage">DarkADays</a></h1>
+        <hr class="panel-cover__divider" />
+
+        
+
+        <div class="navigation-wrapper">
+
+          <nav class="cover-navigation cover-navigation--primary">
+            <ul class="navigation">
+
+              
+                
+                <li class="navigation__item"><a href="/#blog" title="" class="blog-button">首页</a></li>
+              
+                
+                <li class="navigation__item"><a href="/about" title="" class="">关于</a></li>
+              
+                
+                <li class="navigation__item"><a href="/archive" title="" class="">归档</a></li>
+              
+
+            </ul>
+          </nav>
+
+          <!-- ----------------------------
+To add a new social icon simply duplicate one of the list items from below
+and change the class in the <i> tag to match the desired social network
+and then add your link to the <a>. Here is a full list of social network
+classes that you can use:
+
+    icon-social-500px
+    icon-social-behance
+    icon-social-delicious
+    icon-social-designer-news
+    icon-social-deviant-art
+    icon-social-digg
+    icon-social-dribbble
+    icon-social-facebook
+    icon-social-flickr
+    icon-social-forrst
+    icon-social-foursquare
+    icon-social-github
+    icon-social-google-plus
+    icon-social-hi5
+    icon-social-instagram
+    icon-social-lastfm
+    icon-social-linkedin
+    icon-social-medium
+    icon-social-myspace
+    icon-social-path
+    icon-social-pinterest
+    icon-social-rdio
+    icon-social-reddit
+    icon-social-skype
+    icon-social-spotify
+    icon-social-stack-overflow
+    icon-social-steam
+    icon-social-stumbleupon
+    icon-social-treehouse
+    icon-social-tumblr
+    icon-social-twitter
+    icon-social-vimeo
+    icon-social-xbox
+    icon-social-yelp
+    icon-social-youtube
+    icon-social-zerply
+    icon-mail
+
+-------------------------------->
+
+<!-- add social info here -->
+
+
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="panel-cover--overlay"></div>
+  </div>
+</header>
+
+    <div class="content-wrapper">
+        <div class="content-wrapper__inner entry">
+            
+
+<article class="post-container post-container--single">
+
+  <header class="post-header">
+    
+    <h1 class="post-title">Mybatis学习笔记--03</h1>
+
+    
+
+    <div class="post-meta">
+      <time datetime="2020-07-04" class="post-meta__date date">2020-07-04</time> 
+
+      <span class="post-meta__tags tags">
+
+          
+
+          
+
+      </span>
+    </div>
+    
+    
+
+  </header>
+
+  <section id="post-content" class="article-content post">
+    <h1 id="1-Mybatis连接池"><a href="#1-Mybatis连接池" class="headerlink" title="1.Mybatis连接池"></a>1.Mybatis连接池</h1><hr>
+<blockquote>
+<p>涉及到对数据库的操作，我们就不得不提到连接池技术，同样在Mybatis中也存在连接池技术，在==SqlMapConfig.xml==配置文件中，通过 <code>&lt;dataSource type=&quot;POOLED&quot;&gt;</code>来实现Mybatis中连接池的配置。</p>
+</blockquote>
+<ul>
+<li>上面<code>type=POOLED</code>就代表一种数据源类型，在Mybatis中共提供了三种数据源类型</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>type属性的取值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>POOLED</td>
+<td>采用传统的javax.sql.DataSource规范中的连接池</td>
+</tr>
+<tr>
+<td>UNPOOLED</td>
+<td>采用传统的获取连接的方式，虽然也实现了javax.sql.DataSource接口，但是并没有用到池的思想</td>
+</tr>
+<tr>
+<td>JNDI</td>
+<td>采用服务器提供的JNDI技术实现，来获取DataSource对象，不同服务器所拿到的DataSource是不一样的（了解即可）</td>
+</tr>
+<tr>
+<td>&gt; 在以上三种数据源中，我们一般采用<code>POOLED</code>数据源（即我们常用的连接池技术）</td>
+<td></td>
+</tr>
+<tr>
+<td>如果想要修改数据源，直接修改type的值即可。</td>
+<td></td>
+</tr>
+</tbody></table>
+<ul>
+<li>下面我们分别用POOLED和UNPOOLED来测试</li>
+</ul>
+<p><img src="https://img-blog.csdnimg.cn/20200704093511511.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0xMdHVybg==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/20200704093520725.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0xMdHVybg==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>从上面两张图中我们可以看到当type为POOLED时，日志信息有 <code>Returned connection</code>的字样，说明它使用的是连接池的技术。</p>
+<ul>
+<li>通过查看POOLED的实现类PooleDataSource的源代码，我们得到这样的一个过程<br><img src="https://img-blog.csdnimg.cn/20200704093953970.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0xMdHVybg==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><blockquote>
+<p>它会有两个连接池，一个空闲池和一个活动池<br>当要获取连接时，首先从空闲池中找，如果空闲池没有，就到活动池中<br>若活动池中连接的数量没有达到最大数量，就创建一个新的连接，如果达到了就从活动池中取出一个最老的来使用。</p>
+</blockquote>
+<h1 id="2-Mybatis的动态sql语句"><a href="#2-Mybatis的动态sql语句" class="headerlink" title="2.Mybatis的动态sql语句"></a>2.Mybatis的动态sql语句</h1></li>
+</ul>
+<hr>
+<blockquote>
+<p><strong>在前面我们写的sql语句都是比较简单的，实际开发中经常有业务逻辑比较复杂的时候，我们的SQL是动态变化的，这也是Mybatis的强大特性之一。</strong></p>
+</blockquote>
+<h2 id="2-1-动态Sql之if标签"><a href="#2-1-动态Sql之if标签" class="headerlink" title="2.1 动态Sql之if标签"></a>2.1 动态Sql之if标签</h2><blockquote>
+<p>需求：根据传入的是实体类，判断哪些属性不为空，并以此作为查询条件。</p>
+</blockquote>
+<ul>
+<li>接口方法：<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 根据传入的查询条件，进行多条件查询</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> user  包含查询的条件，可能是username，sex，birthday，address等条件</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function">List&lt;User&gt; <span class="title">listUserByCondition</span><span class="params">(User user)</span></span>;</span><br></pre></td></tr></table></figure></li>
+<li>映射文件：<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;select id=<span class="string">"listUserByCondition"</span> resultType=<span class="string">"user"</span> parameterType=<span class="string">"user"</span>&gt;</span><br><span class="line">	select * from user where <span class="number">1</span>=<span class="number">1</span></span><br><span class="line">	&lt;<span class="keyword">if</span> test=<span class="string">"username!=null and username != '' "</span>&gt;</span><br><span class="line">	and username like #&#123;username&#125;	</span><br><span class="line">	&lt;/if&gt;</span><br><span class="line"> 	&lt;<span class="keyword">if</span> test=<span class="string">"address != null"</span>&gt;</span><br><span class="line">	and address like #&#123;address&#125;</span><br><span class="line">	&lt;/if&gt;</span><br><span class="line">&lt;/select&gt;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<ul>
+<li>这里<code>where 1=1</code>是为了防止出现拼接sql出错的情况，即所有条件都为空的情况</li>
+<li><code>&lt;if&gt;&lt;/if&gt;</code>标签中test属性是必须的，表示判断的条件</li>
+</ul>
+</blockquote>
+</li>
+</ul>
+<h2 id="2-2动态Sql之-where-标签"><a href="#2-2动态Sql之-where-标签" class="headerlink" title="2.2动态Sql之 where 标签"></a>2.2动态Sql之 where 标签</h2><ul>
+<li>为了简化上面where 1=1 的条件拼装，可以采用where标签来简化开发。<br>映射配置：<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;select id=<span class="string">"listUserByCondition"</span> parameterType=<span class="string">"User"</span> resultType=<span class="string">"User"</span>&gt;</span><br><span class="line">        select * from user</span><br><span class="line">        &lt;where&gt;</span><br><span class="line">            &lt;<span class="keyword">if</span> test=<span class="string">"username != null"</span>&gt;</span><br><span class="line">                and username = #&#123;username&#125;</span><br><span class="line">            &lt;/if&gt;</span><br><span class="line">            &lt;<span class="keyword">if</span> test=<span class="string">"sex != null"</span>&gt;</span><br><span class="line">                and sex = #&#123;sex&#125;</span><br><span class="line">            &lt;/if&gt;</span><br><span class="line">        &lt;/where&gt;</span><br><span class="line">    &lt;/select&gt;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<ul>
+<li>where标签只会在<code>至少有一个子元素的条件返回SQL语句</code>的情况下才去插入where字句。若语句的开头为AND或者OR where也会把它们去掉。</li>
+</ul>
+</blockquote>
+</li>
+</ul>
+<h2 id="2-3-动态Sql之foreach标签"><a href="#2-3-动态Sql之foreach标签" class="headerlink" title="2.3 动态Sql之foreach标签"></a>2.3 动态Sql之foreach标签</h2><blockquote>
+<ul>
+<li>在我们进行范围查询的时候，需要将一个集合的值，作为参数动态传递进来，这是该如何进行参数的传递呢？</li>
+<li>这时就要用上我们的foreach标签了。</li>
+</ul>
+</blockquote>
+<ul>
+<li>首先编写一个QueryVo实体类，用来封装查询条件。<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 用于封装查询条件</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">QueryVo</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> User user;</span><br><span class="line">    <span class="comment">//如果还有其他的查询条件，就可以一并封住出来</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> List&lt;Integer&gt; ids;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> List&lt;Integer&gt; <span class="title">getIds</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> ids;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setIds</span><span class="params">(List&lt;Integer&gt; ids)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.ids = ids;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> User <span class="title">getUser</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> user;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setUser</span><span class="params">(User user)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.user = user;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>添加接口方法：<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 根据id集合，查询用户</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> vo</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function">List&lt;User&gt; <span class="title">listUserByIds</span><span class="params">(QueryVo vo)</span></span>;</span><br></pre></td></tr></table></figure></li>
+<li>映射配置文件：<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- 根据id集合查询用户 --&gt;</span><br><span class="line">&lt;select id=<span class="string">"listUserByIds"</span> parameterType=<span class="string">"QueryVo"</span> resultType=<span class="string">"User"</span>&gt;</span><br><span class="line">    select * from user</span><br><span class="line">    &lt;where&gt;</span><br><span class="line">        &lt;<span class="keyword">if</span> test=<span class="string">"ids != null and ids.size &gt; 0"</span>&gt;</span><br><span class="line">            &lt;foreach collection=<span class="string">"ids"</span> open=<span class="string">"and id in ("</span> close=<span class="string">")"</span> item=<span class="string">"id"</span> separator=<span class="string">","</span>&gt;</span><br><span class="line">                #&#123;id&#125;</span><br><span class="line">            &lt;/foreach&gt;</span><br><span class="line">        &lt;/if&gt;</span><br><span class="line">    &lt;/where&gt;</span><br><span class="line">&lt;/select&gt;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<ul>
+<li>foreach标签用来遍历集合，它的每个属性的作用如下：<ul>
+<li><code>collection</code>：代表要遍历的集合元素，注意编写是不要写#{}，这个属性是必须的。<ul>
+<li><code>open</code>：代表语句开始的部分</li>
+<li><code>close</code>：代表语句结束的部分</li>
+<li><code>item</code>：代表遍历集合时的每个元素，相当于一个临时变量</li>
+<li><code>separator</code>：代表分隔符</li>
+<li>sql语句<code>#{id}应该和item=“id”</code>保持一致。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<h1 id="3-Mybatis多表查询"><a href="#3-Mybatis多表查询" class="headerlink" title="3.Mybatis多表查询"></a>3.Mybatis多表查询</h1></li>
+<li>表之间的关系有下面这几种：<ul>
+<li>一对一：一个人对应一个身份账号，一个身份证号对应一个人</li>
+<li>一对多（多对一）：一个班级有很多学生，一个学生只有一个班级</li>
+<li>多对多：一个学生有很多个老师，一个老师也有很多个学生 </li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="3-1一对一查询"><a href="#3-1一对一查询" class="headerlink" title="3.1一对一查询"></a>3.1一对一查询</h2><blockquote>
+<ul>
+<li>以用户和账户为例，查询所有账户信息，关联查询下单用户信息。</li>
+<li><code>注意</code>：一个账户信息对应一个用户，所以从查询账户信息出发关联查询用户信息为一对一查询；如果从用户信息出发查询用户下的账户则为一对多的查询，因为一个用户可以有多个账户。</li>
+</ul>
+</blockquote>
+<ul>
+<li>先建立所需的数据库表：<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"># 创建用户表</span><br><span class="line">DROP TABLE IF EXISTS `user`;</span><br><span class="line">CREATE TABLE `user` (</span><br><span class="line">  `id` <span class="keyword">int</span>(<span class="number">11</span>) NOT NULL auto_increment,</span><br><span class="line">  `username` varchar(<span class="number">32</span>) NOT NULL COMMENT <span class="string">'用户名称'</span>,</span><br><span class="line">  `birthday` datetime <span class="keyword">default</span> NULL COMMENT <span class="string">'生日'</span>,</span><br><span class="line">  `sex` <span class="keyword">char</span>(<span class="number">1</span>) <span class="keyword">default</span> NULL COMMENT <span class="string">'性别'</span>,</span><br><span class="line">  `address` varchar(<span class="number">256</span>) <span class="keyword">default</span> NULL COMMENT <span class="string">'地址'</span>,</span><br><span class="line">  <span class="function">PRIMARY <span class="title">KEY</span>  <span class="params">(`id`)</span></span></span><br><span class="line"><span class="function">) ENGINE</span>=InnoDB DEFAULT CHARSET=utf8;</span><br><span class="line"># 导入用户数据</span><br><span class="line">insert  into `user`(`id`,`username`,`birthday`,`sex`,`address`) values (<span class="number">41</span>,<span class="string">'老王'</span>,<span class="string">'2018-02-27 17:47:08'</span>,<span class="string">'男'</span>,<span class="string">'北京'</span>),(<span class="number">42</span>,<span class="string">'小二王'</span>,<span class="string">'2018-03-02 15:09:37'</span>,<span class="string">'女'</span>,<span class="string">'北京金燕龙'</span>),(<span class="number">43</span>,<span class="string">'小二王'</span>,<span class="string">'2018-03-04 11:34:34'</span>,<span class="string">'女'</span>,<span class="string">'北京金燕龙'</span>),(<span class="number">45</span>,<span class="string">'传智播客'</span>,<span class="string">'2018-03-04 12:04:06'</span>,<span class="string">'男'</span>,<span class="string">'北京金燕龙'</span>),(<span class="number">46</span>,<span class="string">'老王'</span>,<span class="string">'2018-03-07 17:37:26'</span>,<span class="string">'男'</span>,<span class="string">'北京'</span>),(<span class="number">48</span>,<span class="string">'小马宝莉'</span>,<span class="string">'2018-03-08 11:44:00'</span>,<span class="string">'女'</span>,<span class="string">'北京修正'</span>);</span><br><span class="line"># 创建账户表，外键为uid，关联用户表的id</span><br><span class="line">DROP TABLE IF EXISTS `account`;</span><br><span class="line">CREATE TABLE `account` (</span><br><span class="line">  `id` <span class="keyword">int</span>(<span class="number">11</span>) NOT NULL COMMENT <span class="string">'编号'</span>,</span><br><span class="line">  `uid` <span class="keyword">int</span>(<span class="number">11</span>) <span class="keyword">default</span> NULL COMMENT <span class="string">'用户编号'</span>,</span><br><span class="line">  `money` <span class="keyword">double</span> <span class="keyword">default</span> NULL COMMENT <span class="string">'金额'</span>,</span><br><span class="line">  <span class="function">PRIMARY <span class="title">KEY</span>  <span class="params">(`id`)</span>,</span></span><br><span class="line"><span class="function">  KEY `FK_Reference_8` <span class="params">(`uid`)</span>,</span></span><br><span class="line"><span class="function">  CONSTRAINT `FK_Reference_8` FOREIGN <span class="title">KEY</span> <span class="params">(`uid`)</span> REFERENCES `user` <span class="params">(`id`)</span></span></span><br><span class="line"><span class="function">) ENGINE</span>=InnoDB DEFAULT CHARSET=utf8;</span><br><span class="line"># 导入账户数据</span><br><span class="line">insert  into `account`(`id`,`uid`,`money`) values (<span class="number">1</span>,<span class="number">46</span>,<span class="number">1000</span>),(<span class="number">2</span>,<span class="number">45</span>,<span class="number">1000</span>),(<span class="number">3</span>,<span class="number">46</span>,<span class="number">2000</span>);</span><br></pre></td></tr></table></figure></li>
+<li>添加账户实体类：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 账户的实体类</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Account</span> <span class="keyword">implements</span> <span class="title">Serializable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Integer id;</span><br><span class="line">    <span class="keyword">private</span> Integer uid;</span><br><span class="line">    <span class="keyword">private</span> Double money;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//从表实体应该包含一个主表实体的对象引用</span></span><br><span class="line">    <span class="keyword">private</span> User user;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> User <span class="title">getUser</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> user;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setUser</span><span class="params">(User user)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.user = user;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Integer <span class="title">getId</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span><span class="params">(Integer id)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.id = id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Integer <span class="title">getUid</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> uid;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setUid</span><span class="params">(Integer uid)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.uid = uid;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Double <span class="title">getMoney</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> money;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setMoney</span><span class="params">(Double money)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.money = money;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"Account&#123;"</span> +</span><br><span class="line">                <span class="string">"id="</span> + id +</span><br><span class="line">                <span class="string">", uid="</span> + uid +</span><br><span class="line">                <span class="string">", money="</span> + money +</span><br><span class="line">                <span class="string">", user="</span> + user +</span><br><span class="line">                <span class="string">'&#125;'</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>定义账户的持久层Dao层：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">IAccountDao</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 查询所有账户,同时还要获取当前账户的所有信息（一对一）</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function">List&lt;Account&gt; <span class="title">findAll</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>添加账户对应的映射配置文件：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">&lt;mapper namespace=<span class="string">"com.zut.dao.IAccountDao"</span>&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!-- 定义可以封装带有User的Account的 resultMap --&gt;</span><br><span class="line">    &lt;resultMap id=<span class="string">"AccountUserMap"</span> type=<span class="string">"Account"</span>&gt;</span><br><span class="line">        &lt;id property="id" column="id"&gt;&lt;/id&gt;</span><br><span class="line">        &lt;result property="uid" column="uid"&gt;&lt;/result&gt;</span><br><span class="line">        &lt;result property="money" column="money"&gt;&lt;/result&gt;</span><br><span class="line">        &lt;!-- 关联User对象 --&gt;</span><br><span class="line">        &lt;association property=<span class="string">"user"</span> javaType=<span class="string">"User"</span>&gt;</span><br><span class="line">            &lt;id property="id" column="id"&gt;&lt;/id&gt;</span><br><span class="line">            &lt;result property="username" column="username"&gt;&lt;/result&gt;</span><br><span class="line">            &lt;result property="sex" column="sex"&gt;&lt;/result&gt;</span><br><span class="line">            &lt;result property="birthday" column="birthday"&gt;&lt;/result&gt;</span><br><span class="line">            &lt;result property="address" column="address"&gt;&lt;/result&gt;</span><br><span class="line">        &lt;/association&gt;</span><br><span class="line">    &lt;/resultMap&gt;</span><br><span class="line"></span><br><span class="line">    &lt;select id=<span class="string">"findAll"</span> resultMap=<span class="string">"AccountUserMap"</span>&gt;</span><br><span class="line">       SELECT * FROM account,USER WHERE user.id=account.uid</span><br><span class="line">    &lt;/select&gt;</span><br><span class="line">&lt;/mapper&gt;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<figure class="highlight plain"><figcaption><span>。</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- 编写测试代码：</span><br><span class="line">&#96;&#96;&#96;java</span><br><span class="line">public class AccountTest &#123;</span><br><span class="line"></span><br><span class="line">   private IAccountDao iAccountDao;</span><br><span class="line">   private SqlSession session;</span><br><span class="line"></span><br><span class="line">   &#x2F;&#x2F;初始化</span><br><span class="line">   @Before</span><br><span class="line">   public void init() throws Exception&#123;</span><br><span class="line">       &#x2F;&#x2F;1.读取配置文件</span><br><span class="line">       InputStream in &#x3D; Resources.getResourceAsStream(&quot;SqlMapConfig.xml&quot;);</span><br><span class="line">       &#x2F;&#x2F;2.创建SqlSessionFactory工厂</span><br><span class="line">       SqlSessionFactoryBuilder builder &#x3D; new SqlSessionFactoryBuilder();</span><br><span class="line">       SqlSessionFactory factory &#x3D; builder.build(in);</span><br><span class="line">       &#x2F;&#x2F;3.使用工厂生产sqlSessino对象</span><br><span class="line">       session &#x3D; factory.openSession();</span><br><span class="line">       &#x2F;&#x2F;4.使用SqlSession创建Dao的代理对象</span><br><span class="line">       iAccountDao &#x3D; session.getMapper(IAccountDao.class);</span><br><span class="line">   &#125;</span><br><span class="line">   @After</span><br><span class="line">   public void destory()&#123;</span><br><span class="line">       session.commit();</span><br><span class="line">       &#x2F;&#x2F;释放资源</span><br><span class="line">       session.close();</span><br><span class="line">   &#125;</span><br><span class="line">   &#x2F;**</span><br><span class="line">    *测试查询所有账户,同时还要获取当前账户的所有信息</span><br><span class="line">    * @throws Exception</span><br><span class="line">    *&#x2F;</span><br><span class="line">   @Test</span><br><span class="line">   public void findAll()&#123;</span><br><span class="line">       &#x2F;&#x2F;5.使用代理对象执行方法</span><br><span class="line">       List&lt;Account&gt; accounts &#x3D; iAccountDao.findAll();</span><br><span class="line">       for (Account account:accounts)&#123;</span><br><span class="line">           System.out.println(account);</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure></blockquote>
+</li>
+<li><p>运行测试代码，可以看到以下结果：<br><img src="https://img-blog.csdnimg.cn/20200704154855770.png" alt="在这里插入图片描述"></p>
+<h2 id="3-2一对多查询"><a href="#3-2一对多查询" class="headerlink" title="3.2一对多查询"></a>3.2一对多查询</h2><blockquote>
+<ul>
+<li>上面一对一是从查询账户信息出发，而一对多是从查询用户信息出发来关联账户</li>
+<li>由于有的用户没有账户，为了防止出现把没有账户的用户给漏掉，我们的sql语句应该采用外连接的方式。</li>
+</ul>
+</blockquote>
+</li>
+<li><p>编写User类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> <span class="keyword">implements</span> <span class="title">Serializable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Integer id;</span><br><span class="line">    <span class="keyword">private</span> String username;</span><br><span class="line">    <span class="keyword">private</span> Date birthday;</span><br><span class="line">    <span class="keyword">private</span> String sex;</span><br><span class="line">    <span class="keyword">private</span> String address;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//一对多关系映射，主表实体应该包含从表实体的集合引用</span></span><br><span class="line">    <span class="keyword">private</span> List&lt;Account&gt; accounts;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> List&lt;Account&gt; <span class="title">getAccounts</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> accounts;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAccounts</span><span class="params">(List&lt;Account&gt; accounts)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.accounts = accounts;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Integer <span class="title">getId</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span><span class="params">(Integer id)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.id = id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getUsername</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> username;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setUsername</span><span class="params">(String username)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.username = username;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Date <span class="title">getBirthday</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> birthday;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setBirthday</span><span class="params">(Date birthday)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.birthday = birthday;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getSex</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> sex;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setSex</span><span class="params">(String sex)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.sex = sex;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getAddress</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> address;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAddress</span><span class="params">(String address)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.address = address;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"User&#123;"</span> +</span><br><span class="line">                <span class="string">"id="</span> + id +</span><br><span class="line">                <span class="string">", username='"</span> + username + <span class="string">'\''</span> +</span><br><span class="line">                <span class="string">", birthday="</span> + birthday +</span><br><span class="line">                <span class="string">", sex='"</span> + sex + <span class="string">'\''</span> +</span><br><span class="line">                <span class="string">", address='"</span> + address + <span class="string">'\''</span> +</span><br><span class="line">                <span class="string">'&#125;'</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>编写User的持久层接口：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">IUserDao</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 查找所有用户,同时获取到用户下所有账户的信息（一对多）</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function">List&lt;User&gt; <span class="title">findAll</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 根据id查找用户</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> id</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function">User <span class="title">getUserById</span><span class="params">(Integer id)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>编写User对应的映射配置文件：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">&lt;mapper namespace=<span class="string">"com.zut.dao.IUserDao"</span>&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!-- 配置User的resultMap --&gt;</span><br><span class="line">    &lt;resultMap id=<span class="string">"UserAccountMap"</span> type=<span class="string">"User"</span>&gt;</span><br><span class="line">        &lt;id property="id" column="id"&gt;&lt;/id&gt;</span><br><span class="line">        &lt;result property="username" column="username"&gt;&lt;/result&gt;</span><br><span class="line">        &lt;result property="sex" column="sex"&gt;&lt;/result&gt;</span><br><span class="line">        &lt;result property="birthday" column="birthday"&gt;&lt;/result&gt;</span><br><span class="line">        &lt;result property="address" column="address"&gt;&lt;/result&gt;</span><br><span class="line">        &lt;!-- 配置user对象中accounts集合的映射 --&gt;</span><br><span class="line">        &lt;collection property=<span class="string">"accounts"</span> ofType=<span class="string">"Account"</span>&gt;</span><br><span class="line">            &lt;id property="id" column="aid"&gt;&lt;/id&gt;</span><br><span class="line">            &lt;result property="uid" column="uid"&gt;&lt;/result&gt;</span><br><span class="line">            &lt;result property="money" column="money"&gt;&lt;/result&gt;</span><br><span class="line">        &lt;/collection&gt;</span><br><span class="line">    &lt;/resultMap&gt;</span><br><span class="line"></span><br><span class="line">    &lt;select id=<span class="string">"findAll"</span> resultMap=<span class="string">"UserAccountMap"</span>&gt;</span><br><span class="line">       SELECT u.*, a.id AS aid, a.uid, a.money FROM USER u LEFT OUTER JOIN account a ON u.id = a.uid</span><br><span class="line">    &lt;/select&gt;</span><br><span class="line"></span><br><span class="line">    &lt;select id=<span class="string">"getUserById"</span> parameterType=<span class="string">"java.lang.Integer"</span> resultType=<span class="string">"User"</span>&gt;</span><br><span class="line">        select * from user where id=#&#123;aa&#125;</span><br><span class="line">    &lt;/select&gt;</span><br><span class="line">&lt;/mapper&gt;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">这里column写为aid而不是id是因为在sql语句中&#96;&#96;&#96;我们给account表中的id起了表明aid，所以上面的cloumn&#x3D;aid </span><br></pre></td></tr></table></figure>
+</blockquote>
+</li>
+<li><p>编写测试代码：</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> IUserDao iUserDao;</span><br><span class="line">    <span class="keyword">private</span> SqlSession session;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//初始化</span></span><br><span class="line">    <span class="meta">@Before</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        <span class="comment">//1.读取配置文件</span></span><br><span class="line">        InputStream in = Resources.getResourceAsStream(<span class="string">"SqlMapConfig.xml"</span>);</span><br><span class="line">        <span class="comment">//2.创建SqlSessionFactory工厂</span></span><br><span class="line">        SqlSessionFactoryBuilder builder = <span class="keyword">new</span> SqlSessionFactoryBuilder();</span><br><span class="line">        SqlSessionFactory factory = builder.build(in);</span><br><span class="line">        <span class="comment">//3.使用工厂生产sqlSessino对象</span></span><br><span class="line">        session = factory.openSession();</span><br><span class="line">        <span class="comment">//4.使用SqlSession创建Dao的代理对象</span></span><br><span class="line">        iUserDao = session.getMapper(IUserDao<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@After</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">destory</span><span class="params">()</span></span>&#123;</span><br><span class="line">        session.commit();</span><br><span class="line">        <span class="comment">//释放资源</span></span><br><span class="line">        session.close();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 测试查找所有</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> Exception</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">findAll</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="comment">//5.使用代理对象执行方法</span></span><br><span class="line">        List&lt;User&gt; users = iUserDao.findAll();</span><br><span class="line">        <span class="keyword">for</span> (User user:users)&#123;</span><br><span class="line">            System.out.println(<span class="string">"----------每个用户的信息----------"</span>);</span><br><span class="line">            System.out.println(user);</span><br><span class="line">            System.out.println(user.getAccounts());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 测试根据id获取用户</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getUserById</span><span class="params">()</span></span>&#123;</span><br><span class="line">        User user = iUserDao.getUserById(<span class="number">45</span>);</span><br><span class="line">        System.out.println(user);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>测试结果如下：<br><img src="https://img-blog.csdnimg.cn/20200704160120296.png" alt="在这里插入图片描述"></p>
+<h2 id="3-3-多对多查询"><a href="#3-3-多对多查询" class="headerlink" title="3.3 多对多查询"></a>3.3 多对多查询</h2></li>
+<li><p>以用户和角色的关系为例，一个用户可以有多个角色，而一个角色也可以有多个用户。</p>
+</li>
+<li><p>需求：</p>
+<ul>
+<li>1.查询用户的时候把用户所拥有的角色信息展示出来。</li>
+<li>2.查询角色的时候把用户的信息给展示出来。</li>
+</ul>
+</li>
+<li><p>它们的关系模型图如图所示：<br><img src="https://img-blog.csdnimg.cn/20200704160853229.png" alt="在这里插入图片描述"></p>
+</li>
+<li><p>第一步，先建立所需要的表：</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"># 创建角色表</span><br><span class="line">DROP TABLE IF EXISTS `role`;</span><br><span class="line">CREATE TABLE `role` (</span><br><span class="line">  `id` <span class="keyword">int</span>(<span class="number">11</span>) NOT NULL COMMENT <span class="string">'编号'</span>,</span><br><span class="line">  `role_name` varchar(<span class="number">30</span>) <span class="keyword">default</span> NULL COMMENT <span class="string">'角色名称'</span>,</span><br><span class="line">  `role_desc` varchar(<span class="number">60</span>) <span class="keyword">default</span> NULL COMMENT <span class="string">'角色描述'</span>,</span><br><span class="line">  <span class="function">PRIMARY <span class="title">KEY</span>  <span class="params">(`id`)</span></span></span><br><span class="line"><span class="function">) ENGINE</span>=InnoDB DEFAULT CHARSET=utf8;</span><br><span class="line"># 添加角色数据</span><br><span class="line">insert  into `role`(`ID`,`ROLE_NAME`,`ROLE_DESC`) values (<span class="number">1</span>,<span class="string">'院长'</span>,<span class="string">'管理整个学院'</span>),(<span class="number">2</span>,<span class="string">'总裁'</span>,<span class="string">'管理整个公司'</span>),(<span class="number">3</span>,<span class="string">'校长'</span>,<span class="string">'管理整个学校'</span>);</span><br><span class="line"># 创建用户角色表，也就是中间表</span><br><span class="line"># uid 和 rid是复合主键，同时也是外键</span><br><span class="line">DROP TABLE IF EXISTS `user_role`;</span><br><span class="line">CREATE TABLE `user_role` (</span><br><span class="line">  `uid` <span class="keyword">int</span>(<span class="number">11</span>) NOT NULL COMMENT <span class="string">'用户编号'</span>,</span><br><span class="line">  `rid` <span class="keyword">int</span>(<span class="number">11</span>) NOT NULL COMMENT <span class="string">'角色编号'</span>,</span><br><span class="line">  <span class="function">PRIMARY <span class="title">KEY</span>  <span class="params">(`uid`,`rid`)</span>,</span></span><br><span class="line"><span class="function">  KEY `FK_Reference_10` <span class="params">(`rid`)</span>,</span></span><br><span class="line"><span class="function">  CONSTRAINT `FK_Reference_10` FOREIGN <span class="title">KEY</span> <span class="params">(`rid`)</span> REFERENCES `role` <span class="params">(`id`)</span>,</span></span><br><span class="line"><span class="function">  CONSTRAINT `FK_Reference_9` FOREIGN <span class="title">KEY</span> <span class="params">(`uid`)</span> REFERENCES `user` <span class="params">(`id`)</span></span></span><br><span class="line"><span class="function">) ENGINE</span>=InnoDB DEFAULT CHARSET=utf8;</span><br><span class="line"># 添加用户角色数据</span><br><span class="line">insert  into `user_role`(`uid`,`rid`) values (<span class="number">41</span>,<span class="number">1</span>),(<span class="number">45</span>,<span class="number">1</span>),(<span class="number">41</span>,<span class="number">2</span>);</span><br></pre></td></tr></table></figure>
+<ul>
+<li>创建User实体类和Role实体类：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> <span class="keyword">implements</span> <span class="title">Serializable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Integer id;</span><br><span class="line">    <span class="keyword">private</span> String username;</span><br><span class="line">    <span class="keyword">private</span> Date birthday;</span><br><span class="line">    <span class="keyword">private</span> String sex;</span><br><span class="line">    <span class="keyword">private</span> String address;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> List&lt;Role&gt; roles;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> List&lt;Role&gt; <span class="title">getRoles</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> roles;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setRoles</span><span class="params">(List&lt;Role&gt; roles)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.roles = roles;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Integer <span class="title">getId</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span><span class="params">(Integer id)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.id = id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getUsername</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> username;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setUsername</span><span class="params">(String username)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.username = username;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Date <span class="title">getBirthday</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> birthday;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setBirthday</span><span class="params">(Date birthday)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.birthday = birthday;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getSex</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> sex;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setSex</span><span class="params">(String sex)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.sex = sex;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getAddress</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> address;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAddress</span><span class="params">(String address)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.address = address;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"User&#123;"</span> +</span><br><span class="line">                <span class="string">"id="</span> + id +</span><br><span class="line">                <span class="string">", username='"</span> + username + <span class="string">'\''</span> +</span><br><span class="line">                <span class="string">", birthday="</span> + birthday +</span><br><span class="line">                <span class="string">", sex='"</span> + sex + <span class="string">'\''</span> +</span><br><span class="line">                <span class="string">", address='"</span> + address + <span class="string">'\''</span> +</span><br><span class="line">                <span class="string">'&#125;'</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Role</span> <span class="keyword">implements</span> <span class="title">Serializable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Integer roleId;</span><br><span class="line">    <span class="keyword">private</span> String roleName;</span><br><span class="line">    <span class="keyword">private</span> String roleDesc;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//多对多的关系映射，一个角色可以赋予多个用户</span></span><br><span class="line">    <span class="keyword">private</span> List&lt;User&gt; users;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> List&lt;User&gt; <span class="title">getUsers</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> users;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setUsers</span><span class="params">(List&lt;User&gt; users)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.users = users;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Integer <span class="title">getRoleId</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> roleId;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setRoleId</span><span class="params">(Integer roleId)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.roleId = roleId;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getRoleName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> roleName;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setRoleName</span><span class="params">(String roleName)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.roleName = roleName;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getRoleDesc</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> roleDesc;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setRoleDesc</span><span class="params">(String roleDesc)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.roleDesc = roleDesc;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"Role&#123;"</span> +</span><br><span class="line">                <span class="string">"roleId="</span> + roleId +</span><br><span class="line">                <span class="string">", roleName='"</span> + roleName + <span class="string">'\''</span> +</span><br><span class="line">                <span class="string">", roleDesc='"</span> + roleDesc + <span class="string">'\''</span> +</span><br><span class="line">                <span class="string">'&#125;'</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>先编写User 的接口层和映射文件：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">IUserDao</span> </span>&#123;</span><br><span class="line">    <span class="function">List&lt;User&gt; <span class="title">findAll</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">&lt;mapper namespace=<span class="string">"com.zut.dao.IUserDao"</span>&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!-- 配置User的resultMap --&gt;</span><br><span class="line">    &lt;resultMap id=<span class="string">"UserRoleMap"</span> type=<span class="string">"User"</span>&gt;</span><br><span class="line">        &lt;id property="id" column="id"&gt;&lt;/id&gt;</span><br><span class="line">        &lt;result property="username" column="username"&gt;&lt;/result&gt;</span><br><span class="line">        &lt;result property="sex" column="sex"&gt;&lt;/result&gt;</span><br><span class="line">        &lt;result property="birthday" column="birthday"&gt;&lt;/result&gt;</span><br><span class="line">        &lt;result property="address" column="address"&gt;&lt;/result&gt;</span><br><span class="line">        &lt;collection property=<span class="string">"roles"</span> ofType=<span class="string">"Role"</span>&gt;</span><br><span class="line">            &lt;id property="roleId" column="rid"&gt;&lt;/id&gt;</span><br><span class="line">            &lt;result property="roleName" column="role_name"&gt;&lt;/result&gt;</span><br><span class="line">            &lt;result property="roleDesc" column="role_desc"&gt;&lt;/result&gt;</span><br><span class="line">        &lt;/collection&gt;</span><br><span class="line">    &lt;/resultMap&gt;</span><br><span class="line"></span><br><span class="line">    &lt;select id=<span class="string">"findAll"</span> resultMap=<span class="string">"UserRoleMap"</span>&gt;</span><br><span class="line">       SELECT u.*,r.id AS rid,r.role_name,r.role_desc FROM USER u</span><br><span class="line">        LEFT OUTER JOIN user_role ur ON u.id=ur.uid</span><br><span class="line">        LEFT OUTER JOIN Role r ON ur.rid = r.id</span><br><span class="line">    &lt;/select&gt;</span><br><span class="line">&lt;/mapper&gt;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>运行测试代码，可以看到结果如下所示：<br><img src="https://img-blog.csdnimg.cn/20200704161547940.png" alt="在这里插入图片描述"><ul>
+<li>编写Role的接口层和映射文件：<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">IRoleDao</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 查询所有角色,并显示角色所对应的用户信息</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function">List&lt;Role&gt; <span class="title">findAll</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">&lt;mapper namespace=<span class="string">"com.zut.dao.IRoleDao"</span>&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!-- 配置Role表的resultMap --&gt;</span><br><span class="line">    &lt;resultMap id=<span class="string">"RoleUserMap"</span> type=<span class="string">"Role"</span>&gt;</span><br><span class="line">        &lt;id property="roleId" column="rid"&gt;&lt;/id&gt;</span><br><span class="line">        &lt;result property="roleName" column="role_name"&gt;&lt;/result&gt;</span><br><span class="line">        &lt;result property="roleDesc" column="role_desc"&gt;&lt;/result&gt;</span><br><span class="line">        &lt;!-- 配置Role对象中User集合的映射 --&gt;</span><br><span class="line">        &lt;collection property=<span class="string">"users"</span> ofType=<span class="string">"User"</span>&gt;</span><br><span class="line">            &lt;id property="id" column="id"&gt;&lt;/id&gt;</span><br><span class="line">            &lt;result property="username" column="username"&gt;&lt;/result&gt;</span><br><span class="line">            &lt;result property="sex" column="sex"&gt;&lt;/result&gt;</span><br><span class="line">            &lt;result property="birthday" column="birthday"&gt;&lt;/result&gt;</span><br><span class="line">            &lt;result property="address" column="address"&gt;&lt;/result&gt;</span><br><span class="line">        &lt;/collection&gt;</span><br><span class="line">    &lt;/resultMap&gt;</span><br><span class="line"></span><br><span class="line">    &lt;select id=<span class="string">"findAll"</span> resultMap=<span class="string">"RoleUserMap"</span>&gt;</span><br><span class="line">       SELECT u.*,r.id AS rid,r.role_name,r.role_desc FROM role r</span><br><span class="line">        LEFT OUTER JOIN user_role ur ON r.id=ur.rid</span><br><span class="line">        LEFT OUTER JOIN USER u ON ur.uid = u.id</span><br><span class="line">    &lt;/select&gt;</span><br><span class="line">&lt;/mapper&gt;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>运行测试代码，结果如图所示：<br><img src="https://img-blog.csdnimg.cn/20200704161752968.png" alt="在这里插入图片描述"><blockquote>
+<ul>
+<li>其实多对多的查询和一对多的查询类似，多对多的查询相当于两个一对多的查询，需要分别在两个实体类中创建对方的集合对象。</li>
+</ul>
+</blockquote>
+</li>
+</ul>
+
+  </section>
+
+  <section class="post-comments">
+
+    <!-- 将评论系统（例如Disqus、多说、友言、畅言等）提供的代码片段粘贴在这里 -->
+    
+</section>
+
+
+</article>
+
+
+            <footer class="footer">
+
+    <span class="footer__copyright">&copy; 2014-2015. | 由<a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>强力驱动 | 主题<a href="https://github.com/someus/huno" target="_blank" rel="noopener">Huno</a></span>
+    
+</footer>
+        </div>
+    </div>
+
+    <!-- js files -->
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/scale.fix.js"></script>
+    
+
+    
+
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript"> 
+        $(document).ready(function(){
+            MathJax.Hub.Config({ 
+                tex2jax: {inlineMath: [['[latex]','[/latex]'], ['\\(','\\)']]} 
+            });
+        });
+    </script>
+
+
+    
+
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/awesome-toc.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $.awesome_toc({
+                overlay: true,
+                contentId: "post-content",
+            });
+        });
+    </script>
+
+
+    
+    
+    <!--kill ie6 -->
+<!--[if IE 6]>
+  <script src="//letskillie6.googlecode.com/svn/trunk/2/zh_CN.js"></script>
+<![endif]-->
+
+</body>
+</html>
